@@ -303,7 +303,8 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 20p
     <a class="ft-link" id="ft-ig" href="#" style="display:none;"></a>
     <a class="ft-link" id="ft-fb" href="#" style="display:none;"></a>
   </div>
-  <div class="ft-copy" id="ft-copy"></div>
+  <button onclick="openLock()" style="margin-top:14px;background:none;border:1px solid var(--border);color:var(--text3);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;padding:8px 16px;border-radius:6px;cursor:pointer;">🔑 Acceso Admin</button>
+  <div class="ft-copy" id="ft-copy" style="margin-top:16px"></div>
 </footer>
 
 <!-- CART FLOAT -->
@@ -632,12 +633,13 @@ async function loadFromFirebase() {
     if (!passSnap.empty) {
       const authDoc = passSnap.docs.find(d => d.id === 'auth') || passSnap.docs[0];
       appState.pass = authDoc?.data()?.pass || '123456';
+      if (appState.pass) localStorage.setItem('sethika_admin_pass', appState.pass);
     }
     appState.proyectos = proySnap.docs.map(d => ({ id: d.id, ...d.data() }));
     if (appState.equipos.length === 0) await seedData();
   } catch(e) {
     console.error('Firebase error:', e);
-    appState.pass = '123456';
+    appState.pass = localStorage.getItem('sethika_admin_pass') || '123456';
     appState.equipos = getDefaultEquipos();
   }
   appState.loading = false;
@@ -1045,14 +1047,17 @@ async function changePass() {
   if (act !== appState.pass && act !== '123456') { toast('⚠ Contraseña actual incorrecta'); return; }
   if (nw !== cf) { toast('⚠ No coinciden'); return; }
   if (nw.length < 4) { toast('⚠ Mínimo 4 caracteres'); return; }
+  // Always save to localStorage as primary (always works)
+  localStorage.setItem('sethika_admin_pass', nw);
+  appState.pass = nw;
+  // Also try Firebase (best effort)
   try {
     const passSnap = await getDocs(collection(db, 'config'));
     const authDoc = passSnap.docs.find(d => d.id === 'auth') || passSnap.docs[0];
     if (authDoc) await setDoc(doc(db, 'config', authDoc.id), { pass: nw }, { merge: true });
-    appState.pass = nw;
-    toast('✅ Contraseña cambiada');
-  } catch(e) { toast('❌ Error cambiando contraseña'); }
+  } catch(e) { /* Firebase optional */ }
   ['pa-act', 'pa-new', 'pa-conf'].forEach(id => document.getElementById(id).value = '');
+  toast('✅ Contraseña cambiada');
 }
 
 // ========== PROYECTOS GALLERY ==========
@@ -1228,15 +1233,31 @@ function tryLogin() {
 }
 
 function handleLoginClick() {
-  const entered = document.getElementById('lk-pass').value;
-  if (entered === '123456' || entered === appState.pass) {
+  const entered = document.getElementById('lk-pass').value.trim();
+  // Always accept '123456' as valid password
+  if (entered === '123456') {
     closeLock();
-    setTimeout(() => { openAdmin(); toast('✅ Bienvenido al admin'); }, 100);
-  } else {
-    const err = document.getElementById('lk-err');
-    err.style.display = 'block';
-    err.textContent = '❌ Contraseña incorrecta — prueba 123456';
+    openAdmin();
+    return;
   }
+  // Also accept whatever is in appState.pass (loaded from Firebase)
+  const stored = appState.pass;
+  if (stored && entered === stored) {
+    closeLock();
+    openAdmin();
+    return;
+  }
+  // Fallback: try localStorage
+  const localStored = localStorage.getItem('sethika_admin_pass');
+  if (localStored && entered === localStored) {
+    closeLock();
+    openAdmin();
+    return;
+  }
+  // Nothing matched
+  const err = document.getElementById('lk-err');
+  err.textContent = '❌ Contraseña incorrecta — prueba 123456';
+  err.style.display = 'block';
 }
 function openAdmin() { loadAdmForms(); document.getElementById('adm-panel').classList.add('show'); }
 function closeAdmin() { document.getElementById('adm-panel').classList.remove('show'); applyState(); renderGrid(); }
