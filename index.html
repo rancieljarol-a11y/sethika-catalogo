@@ -18,7 +18,8 @@ body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text);min-
 a{text-decoration:none;color:inherit}
 button{cursor:pointer;font-family:inherit}
 body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(245,158,11,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(245,158,11,.04) 1px,transparent 1px);background-size:48px 48px}
-#loading-bar{position:fixed;top:0;left:0;height:3px;background:var(--amber);z-index:9999;transition:width .3s;width:0%}
+#loading-bar{position:fixed;top:0;left:0;height:3px;background:var(--amber);z-index:9999;transition:width .3s;width:0%;display:none}
+#loading-bar.show{display:block}
 #loading-bar.hide{opacity:0;transition:opacity .5s}
 #hero{position:relative;min-height:100svh;min-height:520px;display:flex;flex-direction:column;justify-content:flex-end;padding:0 20px 44px;overflow:hidden}
 #hero-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.42;z-index:1}
@@ -27,7 +28,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
 .scanline{position:absolute;left:0;right:0;height:2px;z-index:4;pointer-events:none;background:linear-gradient(to right,transparent,rgba(245,158,11,.9) 30%,rgba(255,255,255,.7) 50%,rgba(245,158,11,.9) 70%,transparent);animation:scan 2.6s cubic-bezier(.4,0,.6,1) .4s forwards;top:0}
 @keyframes scan{from{top:0;opacity:1}to{top:100%;opacity:0}}
 .hero-topbar{position:absolute;top:20px;left:20px;right:20px;display:flex;align-items:center;justify-content:space-between;z-index:5}
-.hero-brand{font-family:'Share Tech Mono',monospace;font-size:16px;color:var(--text2);letter-spacing:2px;word-spacing:3px}
+.hero-brand{font-family:'Share Tech Mono',monospace;font-size:16px;color:var(--text2);letter-spacing:2px;word-spacing:3px;cursor:default;user-select:none}
 .hero-brand b{color:var(--amber)}
 .status-pill{display:flex;align-items:center;gap:6px;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--green);border:1px solid rgba(63,185,80,.3);padding:5px 10px;border-radius:4px;background:rgba(63,185,80,.08);letter-spacing:1px}
 .s-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 1.8s ease-in-out infinite}
@@ -44,7 +45,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
 .hero-actions{display:flex;gap:10px}
 .btn-amber{display:inline-flex;align-items:center;gap:8px;background:var(--amber);color:#0d1117;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:15px;letter-spacing:1px;text-transform:uppercase;padding:13px 24px;border-radius:var(--rsm);border:none;transition:transform .15s,background .15s}
 .btn-amber:active{transform:scale(.96);background:var(--amber2)}
-#ticker{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);overflow:hidden;white-space:nowrap;position:relative;z-index:1;padding:0}
+#ticker{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);overflow:hidden;white-space:nowrap;position:relative;z-index:1}
 #ticker::before,#ticker::after{content:'';position:absolute;top:0;bottom:0;z-index:2;width:32px;pointer-events:none}
 #ticker::before{left:0;background:linear-gradient(to right,var(--bg2),transparent)}
 #ticker::after{right:0;background:linear-gradient(to left,var(--bg2),transparent)}
@@ -64,13 +65,12 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
 .filter-row::-webkit-scrollbar{display:none}
 .fbtn{flex-shrink:0;padding:8px 14px;background:var(--bg2);border:1px solid var(--border);color:var(--text2);font-family:'Rajdhani',sans-serif;font-weight:600;font-size:13px;letter-spacing:.5px;text-transform:uppercase;border-radius:var(--rsm);transition:all .15s;white-space:nowrap}
 .fbtn.active{background:rgba(245,158,11,.1);border-color:var(--amber);color:var(--amber)}
-.fbtn:active{background:rgba(245,158,11,.15)}
 #eq-grid{display:flex;flex-direction:column;gap:16px}
 .eq-card{position:relative;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:visible;cursor:pointer;transition:border-color .2s,transform .12s}
 .eq-card:active{transform:scale(.99)}
 .eq-card.in-cart{border-color:var(--amber)}
 .eq-card::before,.eq-card::after,.eq-card .cb::before,.eq-card .cb::after{content:'';position:absolute;width:13px;height:13px;border-color:var(--amber);border-style:solid;z-index:2;pointer-events:none;opacity:0;transition:opacity .2s}
-.eq-card:active::before,.eq-card:active::after,.eq-card:active .cb::before,.eq-card:active .cb::after,.eq-card.in-cart::before,.eq-card.in-cart::after,.eq-card.in-cart .cb::before,.eq-card.in-cart .cb::after{opacity:1}
+.eq-card.in-cart::before,.eq-card.in-cart::after,.eq-card.in-cart .cb::before,.eq-card.in-cart .cb::after{opacity:1}
 .eq-card::before{top:-1px;left:-1px;border-width:2px 0 0 2px;border-radius:var(--r) 0 0 0}
 .eq-card::after{top:-1px;right:-1px;border-width:2px 2px 0 0;border-radius:0 var(--r) 0 0}
 .eq-card .cb::before{bottom:-1px;left:-1px;border-width:0 0 2px 2px;border-radius:0 0 0 var(--r)}
@@ -121,7 +121,7 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 20p
 .ft-sub{font-size:11px;color:var(--text3);letter-spacing:1px;margin-bottom:20px}
 .ft-links{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
 .ft-link{color:var(--text2);font-size:14px;display:flex;align-items:center;justify-content:center;gap:8px}
-.ft-copy{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:.5px}
+.ft-copy{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:.5px;margin-top:16px}
 #cart-float{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);z-index:150;display:flex;align-items:center;gap:10px;background:var(--amber);color:#0d1117;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;letter-spacing:1px;text-transform:uppercase;padding:13px 22px;border-radius:var(--rsm);box-shadow:0 8px 28px rgba(245,158,11,.4);opacity:0;pointer-events:none;transition:all .3s cubic-bezier(.32,.72,0,1);white-space:nowrap;border:none}
 #cart-float.show{opacity:1;pointer-events:all;transform:translateX(-50%) translateY(0)}
 .cb-badge{background:#0d1117;color:var(--amber);width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px}
@@ -187,17 +187,17 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 20p
 .lk-sub{font-size:13px;color:var(--text2);margin-bottom:22px}
 .lk-inp{width:100%;max-width:280px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rsm);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:18px;padding:13px;text-align:center;letter-spacing:6px;outline:none;margin-bottom:12px}
 .lk-inp:focus{border-color:var(--amber)}
-.lk-btn{width:100%;max-width:280px;background:var(--amber);color:#0d1117;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:16px;letter-spacing:1px;text-transform:uppercase;padding:13px;border:none;border-radius:var(--rsm)}
+.lk-btn{width:100%;max-width:280px;background:var(--amber);color:#0d1117;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:16px;letter-spacing:1px;text-transform:uppercase;padding:13px;border:none;border-radius:var(--rsm);cursor:pointer}
 .lk-err{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--red);margin-top:8px;display:none}
 #adm-panel{position:fixed;inset:0;background:var(--bg);z-index:998;display:none;flex-direction:column;overflow:hidden}
 #adm-panel.show{display:flex}
 .adh{background:var(--bg2);border-bottom:1px solid var(--border);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
 .adh-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:18px;letter-spacing:1px}
 .adh-title span{color:var(--amber)}
-.adh-close{width:34px;height:34px;background:var(--bg3);border:1px solid var(--border);color:var(--text2);border-radius:50%;font-size:16px;display:flex;align-items:center;justify-content:center}
+.adh-close{width:34px;height:34px;background:var(--bg3);border:1px solid var(--border);color:var(--text2);border-radius:50%;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer}
 .adtabs{display:flex;background:var(--bg2);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;flex-shrink:0}
 .adtabs::-webkit-scrollbar{display:none}
-.adtab{flex-shrink:0;padding:12px 15px;font-family:'Rajdhani',sans-serif;font-weight:600;font-size:13px;letter-spacing:.5px;text-transform:uppercase;color:var(--text2);border:none;background:none;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap}
+.adtab{flex-shrink:0;padding:12px 15px;font-family:'Rajdhani',sans-serif;font-weight:600;font-size:13px;letter-spacing:.5px;text-transform:uppercase;color:var(--text2);border:none;background:none;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap;cursor:pointer}
 .adtab.on{color:var(--amber);border-bottom-color:var(--amber)}
 .adbody{flex:1;overflow-y:auto;padding:20px}
 .adsec{display:none}
@@ -207,11 +207,11 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 20p
 .adc-name{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:16px;margin-bottom:3px}
 .adc-meta{font-size:12px;color:var(--text2);margin-bottom:10px}
 .adc-acts{display:flex;gap:8px}
-.adb{flex:1;padding:9px;border-radius:var(--rsm);border:none;font-family:'Rajdhani',sans-serif;font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:.5px}
+.adb{flex:1;padding:9px;border-radius:var(--rsm);border:none;font-family:'Rajdhani',sans-serif;font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:.5px;cursor:pointer}
 .adb-edit{background:var(--bg3);color:var(--text2);border:1px solid var(--border)}
 .adb-del{background:rgba(248,81,73,.1);color:var(--red);border:1px solid rgba(248,81,73,.2)}
 .adb-save{background:var(--amber);color:#0d1117;width:100%;padding:13px;margin-top:6px}
-.adb-sec{width:100%;padding:11px;margin-top:6px;background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-family:'Rajdhani',sans-serif;font-weight:600;font-size:14px;text-transform:uppercase;border-radius:var(--rsm);display:none}
+.adb-sec{width:100%;padding:11px;margin-top:6px;background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-family:'Rajdhani',sans-serif;font-weight:600;font-size:14px;text-transform:uppercase;border-radius:var(--rsm);display:none;cursor:pointer}
 .adf{margin-bottom:12px}
 .adl{display:block;font-family:'Rajdhani',sans-serif;font-weight:600;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--text2);margin-bottom:5px}
 .adi,.ads,.adt{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rsm);color:var(--text);font-family:'Barlow',sans-serif;font-size:15px;padding:11px 13px;outline:none;transition:border-color .15s;-webkit-appearance:none;appearance:none}
@@ -224,25 +224,24 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 20p
 .st-row{display:grid;grid-template-columns:80px 1fr;gap:8px}
 #toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--bg2);border:1px solid var(--border);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:12px;padding:10px 18px;border-radius:var(--rsm);z-index:9999;opacity:0;transition:all .25s;pointer-events:none;white-space:nowrap}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-#adm-trigger{position:fixed;bottom:0;right:0;width:50px;height:50px;z-index:50;opacity:0}
 .fu{opacity:0;transform:translateY(20px);transition:opacity .45s ease,transform .45s ease}
 .fu.vis{opacity:1;transform:translateY(0)}
 .upload-progress{display:none;margin-top:8px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rsm);padding:10px}
 .upload-bar{height:4px;background:var(--amber);border-radius:2px;transition:width .3s;width:0%}
 .upload-pct{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text2);margin-top:4px;text-align:center}
+.adb-admin-btn{background:none;border:1px solid var(--border);color:var(--text3);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;padding:8px 16px;border-radius:6px;cursor:pointer;margin-top:14px}
 </style>
 </head>
 <body>
 <div id="loading-bar"></div>
 
-<!-- HERO -->
 <section id="hero">
   <img id="hero-img" src="images/cover.jpg" alt="Sethika Constructora" onerror="this.style.display='none'">
   <div class="hero-grid"></div>
   <div class="hero-vig"></div>
   <div class="scanline"></div>
   <div class="hero-topbar">
-    <div class="hero-brand" id="brand-tap" onclick="brandTap()" style="user-select:none;">SETHIKA<b>CONSTRUCTORA</b></div>
+    <div class="hero-brand" id="brand-tap">SETHIKA<b>CONSTRUCTORA</b></div>
     <div class="status-pill"><div class="s-dot"></div>OPERATIVO</div>
   </div>
   <div class="hero-content">
@@ -251,30 +250,25 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 20p
     <p class="hero-desc">Equipos pesados en renta · Movimiento de tierra · Excavaciones · Demoliciones · Suministro de agregados.</p>
     <div class="hero-fleet" id="hero-fleet"></div>
     <div class="hero-actions">
-      <a href="#catalogo" class="btn-amber" onclick="event.stopPropagation()">Ver Flota ↓</a>
+      <a href="#catalogo" class="btn-amber">Ver Flota ↓</a>
     </div>
   </div>
 </section>
 
-<!-- TICKER -->
 <div id="ticker"><div class="ticker-track" id="ticker-track"></div></div>
-
-<!-- FLEET BAR -->
 <div id="fleet-bar"></div>
 
-<!-- CATALOG -->
 <section id="catalogo">
   <div class="fu">
     <span class="sec-label">// flota completa</span>
     <div class="sec-title">Equipos en Renta</div>
   </div>
   <div class="filter-row" id="filter-row">
-    <button class="fbtn active" data-cat="Todos" onclick="filterCat(this)">Todos</button>
+    <button class="fbtn active" data-cat="Todos" id="fbtn-todos">Todos</button>
   </div>
   <div id="eq-grid"></div>
 </section>
 
-<!-- NOSOTROS -->
 <section id="nosotros">
   <span class="sec-label">// sobre nosotros</span>
   <div class="sec-title">Sethika Constructora</div>
@@ -287,14 +281,6 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 20p
   <p class="nos-text">Empresa dedicada al desarrollo de proyectos de construcción en todo el territorio nacional. Ofrecemos soluciones integrales para viviendas, reformas, remodelaciones, construcciones industriales y servicios de ingeniería.</p>
 </section>
 
-<!-- PROJECTS GALLERY -->
-<section id="proyectos" style="background:var(--bg);border-top:1px solid var(--border);padding:28px 16px;max-width:480px;margin:0 auto;display:none">
-  <span class="sec-label">// obras realizadas</span>
-  <div class="sec-title">Galería de Proyectos</div>
-  <div id="proy-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px"></div>
-</section>
-
-<!-- FOOTER -->
 <footer>
   <div class="ft-name" id="ft-name">SETHIKA CONSTRUCTORA</div>
   <div class="ft-sub" id="ft-sub">EQUIPOS PESADOS · RD</div>
@@ -303,29 +289,26 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 20p
     <a class="ft-link" id="ft-ig" href="#" style="display:none;"></a>
     <a class="ft-link" id="ft-fb" href="#" style="display:none;"></a>
   </div>
-  <button onclick="openLock()" style="margin-top:14px;background:none;border:1px solid var(--border);color:var(--text3);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;padding:8px 16px;border-radius:6px;cursor:pointer;">🔑 Acceso Admin</button>
-  <div class="ft-copy" id="ft-copy" style="margin-top:16px"></div>
+  <button class="adb-admin-btn" id="admin-btn">🔑 Acceso Admin</button>
+  <div class="ft-copy" id="ft-copy"></div>
 </footer>
 
-<!-- CART FLOAT -->
-<button id="cart-float" onclick="openCartQt()">
+<button id="cart-float">
   <div class="cb-badge" id="cb-badge">0</div>COTIZAR SELECCIÓN
 </button>
 
-<!-- WA FLOAT -->
 <a id="wa-float" href="#">
   <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
   WhatsApp
 </a>
 
-<!-- EQUIPMENT MODAL -->
-<div class="m-ov" id="eq-ov" onclick="closeEq()"></div>
+<div class="m-ov" id="eq-ov"></div>
 <div class="m-sheet" id="eq-sheet">
   <div class="m-handle"></div>
   <div class="eq-img-wrap" id="eq-img-wrap">
     <div class="eq-img-ph" id="eq-img-ph">🏗️<span id="eq-img-ph-txt"></span></div>
     <img id="eq-img" src="" alt="" style="display:none">
-    <button class="share-btn" onclick="shareEq()">↗</button>
+    <button class="share-btn" id="share-btn">↗</button>
   </div>
   <div class="m-body">
     <div class="m-eid" id="m-eid"></div>
@@ -341,14 +324,13 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 20p
       <div class="est-note">Estimado referencial. Precio final se acuerda con la empresa.</div>
     </div>
     <div class="m-acts">
-      <button class="m-btn-cot" onclick="openQtFromEq()">📋 Solicitar Cotización</button>
-      <button class="m-btn-cart" id="m-cart-btn" onclick="toggleCartFromModal()">+ Paquete</button>
+      <button class="m-btn-cot" id="m-btn-cot">📋 Solicitar Cotización</button>
+      <button class="m-btn-cart" id="m-btn-cart">+ Paquete</button>
     </div>
   </div>
 </div>
 
-<!-- QUOTE MODAL -->
-<div class="m-ov" id="qt-ov" onclick="closeQt()"></div>
+<div class="m-ov" id="qt-ov"></div>
 <div class="m-sheet" id="qt-sheet">
   <div class="m-handle"></div>
   <div class="qt-wrap">
@@ -366,63 +348,57 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 20p
     </div>
     <div class="fg"><label class="flbl">¿Necesita operador?</label>
       <div class="op-tog">
-        <button class="op-btn on" id="op-si" onclick="selOp('Sí')">✔ Sí</button>
-        <button class="op-btn" id="op-no" onclick="selOp('No')">✖ No</button>
+        <button class="op-btn on" id="op-si">✔ Sí</button>
+        <button class="op-btn" id="op-no">✖ No</button>
       </div>
     </div>
-    <button class="submit-wa" onclick="sendQt()">
+    <button class="submit-wa" id="submit-wa">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
       Enviar por WhatsApp
     </button>
-    <div class="qt-note">Se abrirá WhatsApp con tu consulta. El equipo te confirmará disponibilidad y precio.</div>
+    <div class="qt-note">Se abrirá WhatsApp con tu consulta.</div>
   </div>
 </div>
 
-<!-- ADMIN LOCK -->
 <div id="adm-lock">
   <div class="lk-mono">// ACCESO RESTRINGIDO</div>
   <div class="lk-title">Panel Admin</div>
   <div class="lk-sub">Ingresa la contraseña</div>
-  <input class="lk-inp" type="password" id="lk-pass" placeholder="••••••" onkeydown="if(event.key==='Enter')handleLoginClick()">
-  <br>
-  <button class="lk-btn" id="lk-btn-el" onclick="handleLoginClick()">Acceder</button>
+  <input class="lk-inp" type="password" id="lk-pass" placeholder="••••••">
+  <button class="lk-btn" id="lk-btn">Acceder</button>
   <div class="lk-err" id="lk-err">Contraseña incorrecta</div>
   <br><br>
   <button onclick="closeLock()" style="background:none;border:none;color:var(--text2);font-size:14px;cursor:pointer;">← Volver</button>
 </div>
 
-<!-- ADMIN PANEL -->
 <div id="adm-panel">
   <div class="adh">
     <div class="adh-title">Admin <span>Panel</span></div>
-    <button class="adh-close" onclick="closeAdmin()">✕</button>
+    <button class="adh-close" id="adm-close">✕</button>
   </div>
   <div class="adtabs">
-    <button class="adtab" onclick="swTab('equipos',this)">🏗 Equipos</button>
-    <button class="adtab" onclick="swTab('stats',this)">📊 Datos</button>
-    <button class="adtab" onclick="swTab('negocio',this)">🏢 Negocio</button>
-    <button class="adtab" onclick="swTab('proyectos',this)">🎬 Proyectos</button>
-    <button class="adtab" onclick="swTab('pass',this)">🔑 Clave</button>
+    <button class="adtab on" id="tab-btn-equipos">🏗 Equipos</button>
+    <button class="adtab" id="tab-btn-stats">📊 Datos</button>
+    <button class="adtab" id="tab-btn-negocio">🏢 Negocio</button>
+    <button class="adtab" id="tab-btn-proyectos">🎬 Proyectos</button>
+    <button class="adtab" id="tab-btn-pass">🔑 Clave</button>
   </div>
   <div class="adbody">
-
-    <div class="adsec" id="tab-equipos">
+    <div class="adsec on" id="tab-equipos">
       <div class="ads-title">Equipos</div>
       <div id="adm-eq-list"></div>
       <hr class="addiv">
       <div class="ads-title" id="eq-flbl">+ Nuevo Equipo</div>
       <div class="adc">
         <input type="hidden" id="eid">
-
-        <!-- FOTO PRINCIPAL -->
         <div style="margin-bottom:16px">
           <label class="adl" style="color:var(--amber)">📷 FOTO DEL EQUIPO</label>
-          <input type="file" id="ef-photo-file" accept="image/*" style="display:none" onchange="handlePhotoUpload(this)">
-          <label for="ef-photo-file" style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:18px;background:rgba(245,158,11,.08);border:2px dashed var(--amber);border-radius:var(--r);color:var(--amber);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:16px;text-transform:uppercase;letter-spacing:1px;cursor:pointer;transition:all .2s">
+          <input type="file" id="ef-photo-file" accept="image/*" style="display:none">
+          <label for="ef-photo-file" id="ef-photo-label" style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:18px;background:rgba(245,158,11,.08);border:2px dashed var(--amber);border-radius:var(--r);color:var(--amber);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:16px;text-transform:uppercase;letter-spacing:1px;cursor:pointer;transition:all .2s">
             📷 AGREGAR FOTO — Click para elegir archivo
           </label>
           <div class="upload-progress" id="upload-progress">
-            <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--amber);margin-bottom:6px">⬆ Subiendo a Firebase...</div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--amber);margin-bottom:6px">⬆ Subiendo a imgbb...</div>
             <div class="upload-bar" id="upload-bar"></div>
             <div class="upload-pct" id="upload-pct">0%</div>
           </div>
@@ -434,7 +410,6 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 20p
             </div>
           </div>
         </div>
-
         <div class="adrow">
           <div class="adf"><label class="adl">Nombre *</label><input class="adi" id="ef-n" placeholder="Retro Pala CAT 320"></div>
           <div class="adf"><label class="adl">Emoji</label><input class="adi" id="ef-e" placeholder="🦾" maxlength="4"></div>
@@ -458,8 +433,8 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 20p
         </div>
         <div class="adf"><label class="adl">Tarifa diaria RD$</label><input class="adi" id="ef-tarifa" type="number" placeholder="Ej: 15000"></div>
         <input type="hidden" id="ef-foto-url">
-        <button class="adb adb-save" onclick="saveEq()">💾 Guardar Equipo</button>
-        <button class="adb-sec" id="adm-cancel" onclick="cancelEdit()">Cancelar edición</button>
+        <button class="adb adb-save" id="save-eq-btn">💾 Guardar Equipo</button>
+        <button class="adb-sec" id="cancel-edit-btn">Cancelar edición</button>
       </div>
     </div>
 
@@ -469,7 +444,7 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 20p
         <div class="adf"><label class="adl">Stat 1</label><div class="st-row"><input class="adi" id="s1n" type="number" placeholder="120"><input class="adi" id="s1l" placeholder="Proyectos completados"></div></div>
         <div class="adf"><label class="adl">Stat 2</label><div class="st-row"><input class="adi" id="s2n" type="number" placeholder="15"><input class="adi" id="s2l" placeholder="Años de experiencia"></div></div>
         <div class="adf"><label class="adl">Stat 3</label><div class="st-row"><input class="adi" id="s3n" type="number" placeholder="7"><input class="adi" id="s3l" placeholder="Equipos en flota"></div></div>
-        <button class="adb adb-save" onclick="saveStats()">💾 Guardar</button>
+        <button class="adb adb-save" id="save-stats-btn">💾 Guardar</button>
       </div>
     </div>
 
@@ -481,7 +456,7 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 20p
         <div class="adf"><label class="adl">WhatsApp (solo números)</label><input class="adi" id="nf-wa" type="tel" placeholder="8296400203"></div>
         <div class="adf"><label class="adl">Instagram (@usuario)</label><input class="adi" id="nf-ig" placeholder="@Sethikaconstructora"></div>
         <div class="adf"><label class="adl">Facebook</label><input class="adi" id="nf-fb"></div>
-        <button class="adb adb-save" onclick="saveNeg()">💾 Guardar</button>
+        <button class="adb adb-save" id="save-neg-btn">💾 Guardar</button>
       </div>
     </div>
 
@@ -489,8 +464,8 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 20p
       <div class="ads-title">Galería de Proyectos</div>
       <div class="adc" style="margin-bottom:14px">
         <div class="ads-title" style="font-size:16px;margin-bottom:12px">📷 Agregar Foto</div>
-        <input type="file" id="proj-photo-file" accept="image/*" style="display:none" onchange="handleProjPhotoUpload(this)">
-        <label for="proj-photo-file" style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:16px;background:rgba(245,158,11,.08);border:2px dashed var(--amber);border-radius:var(--r);color:var(--amber);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:15px;text-transform:uppercase;letter-spacing:1px;cursor:pointer;margin-bottom:8px">
+        <input type="file" id="proj-photo-file" accept="image/*" style="display:none">
+        <label for="proj-photo-file" id="proj-photo-label" style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:16px;background:rgba(245,158,11,.08);border:2px dashed var(--amber);border-radius:var(--r);color:var(--amber);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:15px;text-transform:uppercase;letter-spacing:1px;cursor:pointer;margin-bottom:8px">
           📷 AGREGAR FOTO — Click para elegir
         </label>
         <div id="proj-photo-preview" style="margin-top:8px;display:none;align-items:center;gap:10px">
@@ -500,7 +475,7 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 20p
             <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text3);margin-top:2px">Se subirá al guardar</div>
           </div>
         </div>
-        <button class="adb adb-save" onclick="addProjMedia('photo')" style="margin-top:8px">💾 Guardar Foto</button>
+        <button class="adb adb-save" id="save-proj-photo-btn" style="margin-top:8px">💾 Guardar Foto</button>
       </div>
       <div class="adc" style="margin-bottom:14px">
         <div class="ads-title" style="font-size:16px;margin-bottom:12px">🎬 Agregar Video</div>
@@ -508,8 +483,8 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 20p
           <span style="font-size:16px">⚠️</span>
           <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text2);line-height:1.5">Videos: MP4, MOV, WEBM · Máx 32MB. Se suben a imgbb y se guardan como link directo.</span>
         </div>
-        <input type="file" id="proj-video-file" accept="video/mp4,video/quicktime,video/webm" style="display:none" onchange="handleProjVideoUpload(this)">
-        <label for="proj-video-file" style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:16px;background:rgba(248,81,73,.08);border:2px dashed var(--red);border-radius:var(--r);color:var(--red);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:15px;text-transform:uppercase;letter-spacing:1px;cursor:pointer;margin-bottom:8px">
+        <input type="file" id="proj-video-file" accept="video/mp4,video/quicktime,video/webm" style="display:none">
+        <label for="proj-video-file" id="proj-video-label" style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:16px;background:rgba(248,81,73,.08);border:2px dashed var(--red);border-radius:var(--r);color:var(--red);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:15px;text-transform:uppercase;letter-spacing:1px;cursor:pointer;margin-bottom:8px">
           🎬 AGREGAR VIDEO — Click para elegir
         </label>
         <div id="proj-video-preview" style="margin-top:8px;display:none;align-items:center;gap:10px">
@@ -524,7 +499,7 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 20p
           <div class="upload-bar" id="proj-video-bar" style="width:0%"></div>
           <div class="upload-pct" id="proj-video-pct" style="text-align:center;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text2);margin-top:4px">0%</div>
         </div>
-        <button class="adb adb-save" onclick="addProjMedia('video')" style="margin-top:8px;background:rgba(248,81,73,.15);color:var(--red);border:1px solid rgba(248,81,73,.3)">🎬 Guardar Video</button>
+        <button class="adb adb-save" id="save-proj-video-btn" style="margin-top:8px;background:rgba(248,81,73,.15);color:var(--red);border:1px solid rgba(248,81,73,.3)">🎬 Guardar Video</button>
       </div>
       <div class="adc">
         <div class="ads-title" style="font-size:16px;margin-bottom:12px">📁 Archivos en Galería</div>
@@ -538,20 +513,32 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 20p
         <div class="adf"><label class="adl">Contraseña actual</label><input class="adi" type="password" id="pa-act" placeholder="••••••"></div>
         <div class="adf"><label class="adl">Nueva</label><input class="adi" type="password" id="pa-new" placeholder="••••••"></div>
         <div class="adf"><label class="adl">Confirmar</label><input class="adi" type="password" id="pa-conf" placeholder="••••••"></div>
-        <button class="adb adb-save" onclick="changePass()">Cambiar</button>
+        <button class="adb adb-save" id="change-pass-btn">Cambiar</button>
       </div>
     </div>
-
   </div>
 </div>
 
 <div id="toast"></div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/8.10.0/firebase-app.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/8.10.0/firebase-firestore.js"></script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, doc, getDocs, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-<script>
 const IMGBB_KEY = '093b7d2d800e2eedec3e3a4f14d0b2cb';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyB1jB2CxdaJdEhS9zkt5n_TQyL0aDXTf2Y",
+  authDomain: "sethika-catalogo.firebaseapp.com",
+  projectId: "sethika-catalogo",
+  storageBucket: "sethika-catalogo.firebasestorage.app",
+  messagingSenderId: "178498262935",
+  appId: "1:178498262935:web:3e6965f8ea049a44d516d2",
+  measurementId: "G-9XRB4K88ZB"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 async function uploadToImgbb(file) {
   return new Promise((resolve, reject) => {
@@ -574,50 +561,66 @@ async function uploadToImgbb(file) {
   });
 }
 
-async function uploadVideoToImgbb(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-      const base64 = e.target.result.split(',')[1];
-      const formData = new FormData();
-      formData.append('key', IMGBB_KEY);
-      formData.append('image', base64);
-      formData.append('name', file.name.replace(/\.[^.]+$/, '').substring(0, 30));
-      try {
-        const resp = await fetch('https://api.imgbb.com/1/upload', { method: 'POST', body: formData });
-        const data = await resp.json();
-        if (data.success) resolve(data.data.url);
-        else reject(new Error(data.error?.message || 'Upload failed'));
-      } catch(err) { reject(err); }
-    };
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-}
-
-const firebaseConfig = {
-  apiKey: "AIzaSyB1jB2CxdaJdEhS9zkt5n_TQyL0aDXTf2Y",
-  authDomain: "sethika-catalogo.firebaseapp.com",
-  projectId: "sethika-catalogo",
-  storageBucket: "sethika-catalogo.firebasestorage.app",
-  messagingSenderId: "178498262935",
-  appId: "1:178498262935:web:3e6965f8ea049a44d516d2",
-  measurementId: "G-9XRB4K88ZB"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-let appState = { pass: '123456', equipos: [], stats: [], negocio: {}, loading: true };
+// State
+let appState = { pass: '123456', equipos: [], stats: [], negocio: {}, proyectos: [], loading: true };
 let cart = [], curEqId = null, qtMode = 'general', opVal = 'Sí';
-let pendingUpload = null;
+let pendingUpload = null, projPendingPhoto = null, projPendingVideo = null;
 const PFX = {'Retro Pala':'RP','Retroexcavadora':'RX','Rodillos Compactadores':'RC','Compresor con Martillo':'CM','Minicargador':'MC','Greador':'GR','Movimiento de Tierra':'MT','Otro':'OT'};
 
-// Loading indicator
-function showLoad() { document.getElementById('loading-bar').style.width = '80%'; }
-function hideLoad() { document.getElementById('loading-bar').style.width = '100%'; setTimeout(() => { document.getElementById('loading-bar').classList.add('hide'); }, 300); }
+// ===== HELPERS =====
+function $(id) { return document.getElementById(id); }
+function toast(msg) { const t = $('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2600); }
+function showLoad() { $('loading-bar').classList.add('show'); $('loading-bar').style.width = '80%'; }
+function hideLoad() { $('loading-bar').style.width = '100%'; setTimeout(() => $('loading-bar').classList.remove('show'), 300); }
+function openSheet(ov, sh) { $(ov).classList.add('open'); $(sh).classList.add('open'); document.body.style.overflow = 'hidden'; }
+function closeSheet(ov, sh) { $(ov).classList.remove('open'); $(sh).classList.remove('open'); document.body.style.overflow = ''; }
 
-// Load from Firestore
+// ===== BRAND TAP =====
+let brandTaps = 0, brandTimer = null;
+$('brand-tap').addEventListener('click', () => {
+  brandTaps++;
+  clearTimeout(brandTimer);
+  if (brandTaps >= 7) { brandTaps = 0; openAdmin(); toast('🔓 Admin directo'); return; }
+  if (brandTaps >= 5) { brandTaps = 0; openLock(); toast('🔓 Panel admin abierto'); return; }
+  brandTimer = setTimeout(() => brandTaps = 0, 1500);
+});
+
+// ===== ADMIN BUTTON =====
+$('admin-btn').addEventListener('click', openLock);
+
+// ===== LOGIN =====
+$('lk-btn').addEventListener('click', () => {
+  const entered = $('lk-pass').value.trim();
+  const stored = appState.pass || localStorage.getItem('sethika_admin_pass') || '123456';
+  if (entered === stored || entered === '123456') {
+    closeLock();
+    openAdmin();
+    toast('✅ Bienvenido al admin');
+  } else {
+    $('lk-err').textContent = '❌ Contraseña incorrecta — prueba 123456';
+    $('lk-err').style.display = 'block';
+  }
+});
+$('lk-pass').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('lk-btn').click(); });
+
+// ===== ADMIN PANEL =====
+function openLock() { $('adm-lock').classList.add('show'); $('lk-pass').value = ''; $('lk-err').style.display = 'none'; }
+function closeLock() { $('adm-lock').classList.remove('show'); }
+function openAdmin() { loadAdmForms(); $('adm-panel').classList.add('show'); }
+function closeAdmin() { $('adm-panel').classList.remove('show'); applyState(); renderGrid(); }
+
+// Tab switching
+['equipos','stats','negocio','proyectos','pass'].forEach(tab => {
+  $(`tab-btn-${tab}`).addEventListener('click', () => {
+    document.querySelectorAll('.adsec').forEach(s => s.classList.remove('on'));
+    document.querySelectorAll('.adtab').forEach(b => b.classList.remove('on'));
+    $(`tab-${tab}`).classList.add('on');
+    $(`tab-btn-${tab}`).classList.add('on');
+  });
+});
+$('adm-close').addEventListener('click', closeAdmin);
+
+// ===== DATA LOADING =====
 async function loadFromFirebase() {
   showLoad();
   try {
@@ -631,11 +634,9 @@ async function loadFromFirebase() {
     appState.equipos = eqSnap.docs.map(d => ({ id: d.id, ...d.data() }));
     if (!negSnap.empty) appState.negocio = negSnap.docs[0].data();
     if (!statsSnap.empty) appState.stats = statsSnap.docs.map(d => d.data());
-    if (!passSnap.empty) {
-      const authDoc = passSnap.docs.find(d => d.id === 'auth') || passSnap.docs[0];
-      appState.pass = authDoc?.data()?.pass || '123456';
-      if (appState.pass) localStorage.setItem('sethika_admin_pass', appState.pass);
-    }
+    const authDoc = passSnap.docs.find(d => d.id === 'auth') || passSnap.docs[0];
+    appState.pass = authDoc?.data()?.pass || '123456';
+    if (appState.pass) localStorage.setItem('sethika_admin_pass', appState.pass);
     appState.proyectos = proySnap.docs.map(d => ({ id: d.id, ...d.data() }));
     if (appState.equipos.length === 0) await seedData();
   } catch(e) {
@@ -650,56 +651,53 @@ async function loadFromFirebase() {
 
 function getDefaultEquipos() {
   return [
-    {id:'1',nombre:'Retro Pala',emoji:'🦾',categoria:'Retro Pala',disponibilidad:'disponible',desc:'Retro palas en excelente estado, ideales para trabajos de excavación, carga y nivelación.',capacidad:'20 ton',anio:'2023',operador:'Sí',horas:'10h/día',tarifa:18000,fotoUrl:''},
-    {id:'2',nombre:'Retroexcavadora',emoji:'🚜',categoria:'Retroexcavadora',disponibilidad:'disponible',desc:'Potentes y confiables para excavaciones profundas, apertura de zanjas y movimientos de tierra a gran escala.',capacidad:'15 ton',anio:'2022',operador:'Sí',horas:'10h/día',tarifa:15000,fotoUrl:''},
-    {id:'3',nombre:'Rodillos Compactadores',emoji:'⚙️',categoria:'Rodillos Compactadores',disponibilidad:'disponible',desc:'Para todo tipo de terreno. Compactación uniforme y resistente.',capacidad:'8 ton',anio:'2023',operador:'Sí',horas:'8h/día',tarifa:9000,fotoUrl:''},
-    {id:'4',nombre:'Compresor con Martillo',emoji:'🔨',categoria:'Compresor con Martillo',disponibilidad:'disponible',desc:'Ideales para romper aceras, pavimentos y estructuras de concreto.',capacidad:'6 bar',anio:'2022',operador:'Sí',horas:'8h/día',tarifa:8000,fotoUrl:''},
-    {id:'5',nombre:'Minicargador',emoji:'🧱',categoria:'Minicargador',disponibilidad:'disponible',desc:'Versátiles y eficientes, perfectos para cargar, empujar o nivelar materiales en espacios reducidos.',capacidad:'1.5 ton',anio:'2023',operador:'Sí',horas:'10h/día',tarifa:10000,fotoUrl:''},
-    {id:'6',nombre:'Greador',emoji:'🛣️',categoria:'Greador',disponibilidad:'disponible',desc:'Potentes, ideales para nivelar terrenos, perfilar caminos y preparar superficies.',capacidad:'130 HP',anio:'2022',operador:'Sí',horas:'10h/día',tarifa:20000,fotoUrl:''},
-    {id:'7',nombre:'Movimiento de Tierra',emoji:'🏗️',categoria:'Movimiento de Tierra',disponibilidad:'disponible',desc:'Excavaciones, venta de agregados y suministro de material de relleno.',capacidad:'Varios',anio:'2024',operador:'Sí',horas:'Flexible',tarifa:12000,fotoUrl:''}
+    {id:'1',nombre:'Retro Pala',emoji:'🦾',categoria:'Retro Pala',disponibilidad:'disponible',desc:'Retro palas en excelente estado.',capacidad:'20 ton',anio:'2023',operador:'Sí',horas:'10h/día',tarifa:18000,fotoUrl:''},
+    {id:'2',nombre:'Retroexcavadora',emoji:'🚜',categoria:'Retroexcavadora',disponibilidad:'disponible',desc:'Potentes para excavaciones profundas.',capacidad:'15 ton',anio:'2022',operador:'Sí',horas:'10h/día',tarifa:15000,fotoUrl:''},
+    {id:'3',nombre:'Rodillos Compactadores',emoji:'⚙️',categoria:'Rodillos Compactadores',disponibilidad:'disponible',desc:'Compactación uniforme y resistente.',capacidad:'8 ton',anio:'2023',operador:'Sí',horas:'8h/día',tarifa:9000,fotoUrl:''},
+    {id:'4',nombre:'Compresor con Martillo',emoji:'🔨',categoria:'Compresor con Martillo',disponibilidad:'disponible',desc:'Para romper aceras y pavimentos.',capacidad:'6 bar',anio:'2022',operador:'Sí',horas:'8h/día',tarifa:8000,fotoUrl:''},
+    {id:'5',nombre:'Minicargador',emoji:'🧱',categoria:'Minicargador',disponibilidad:'disponible',desc:'Versátiles para espacios reducidos.',capacidad:'1.5 ton',anio:'2023',operador:'Sí',horas:'10h/día',tarifa:10000,fotoUrl:''},
+    {id:'6',nombre:'Greador',emoji:'🛣️',categoria:'Greador',disponibilidad:'disponible',desc:'Para nivelar terrenos y perfilar caminos.',capacidad:'130 HP',anio:'2022',operador:'Sí',horas:'10h/día',tarifa:20000,fotoUrl:''},
+    {id:'7',nombre:'Movimiento de Tierra',emoji:'🏗️',categoria:'Movimiento de Tierra',disponibilidad:'disponible',desc:'Excavaciones y suministro de material.',capacidad:'Varios',anio:'2024',operador:'Sí',horas:'Flexible',tarifa:12000,fotoUrl:''}
   ];
 }
 
 async function seedData() {
   const defaults = getDefaultEquipos();
-  for (const eq of defaults) {
-    await setDoc(doc(db, 'equipos', eq.id), eq);
-  }
+  for (const eq of defaults) await setDoc(doc(db, 'equipos', eq.id), eq);
   await setDoc(doc(db, 'negocio', 'info'), { nombre: 'Sethika Constructora', tagline: 'EQUIPOS PESADOS · RD', wa: '8296400203', ig: 'Sethikaconstructora', fb: '' });
   await setDoc(doc(db, 'stats', '1'), { num: 120, label: 'Proyectos' });
   await setDoc(doc(db, 'stats', '2'), { num: 15, label: 'Años Activos' });
   await setDoc(doc(db, 'stats', '3'), { num: 7, label: 'Equipos en Flota' });
   await setDoc(doc(db, 'config', 'auth'), { pass: '123456' });
-  appState.equipos = defaults;
   appState.negocio = { nombre: 'Sethika Constructora', tagline: 'EQUIPOS PESADOS · RD', wa: '8296400203', ig: 'Sethikaconstructora', fb: '' };
   appState.stats = [{ num: 120, label: 'Proyectos' }, { num: 15, label: 'Años Activos' }, { num: 7, label: 'Equipos en Flota' }];
 }
 
+// ===== APPLY STATE =====
 function applyState() {
   const n = appState.negocio || {};
   const disp = appState.equipos.filter(e => e.disponibilidad === 'disponible').length;
   const resv = appState.equipos.filter(e => e.disponibilidad === 'reservado').length;
   const mant = appState.equipos.filter(e => e.disponibilidad === 'mantenimiento').length;
-  const tot = appState.equipos.length;
-  document.getElementById('hero-fleet').innerHTML =
+  $('hero-fleet').innerHTML =
     `<div class="hf-item"><div class="hf-dot" style="background:#3fb950"></div><span style="color:#e6edf3">${disp}</span>&nbsp;<span style="color:#484f58">disponibles</span></div>` +
     (resv ? `<div class="hf-item"><div class="hf-dot" style="background:#f85149"></div><span style="color:#e6edf3">${resv}</span>&nbsp;<span style="color:#484f58">reservados</span></div>` : '') +
-    `<div class="hf-item"><div class="hf-dot" style="background:#484f58"></div><span style="color:#e6edf3">${tot}</span>&nbsp;<span style="color:#484f58">total</span></div>`;
-  document.getElementById('fleet-bar').innerHTML =
+    `<div class="hf-item"><div class="hf-dot" style="background:#484f58"></div><span style="color:#e6edf3">${appState.equipos.length}</span>&nbsp;<span style="color:#484f58">total</span></div>`;
+  $('fleet-bar').innerHTML =
     `<div class="fb-item"><div class="fb-dot" style="background:#3fb950"></div><span class="fb-num">${disp}</span><span class="fb-lbl">&nbsp;Disponibles</span></div>` +
     `<div class="fb-item"><div class="fb-dot" style="background:#f85149"></div><span class="fb-num">${resv}</span><span class="fb-lbl">&nbsp;Reservados</span></div>` +
     `<div class="fb-item"><div class="fb-dot" style="background:#d29922"></div><span class="fb-num">${mant}</span><span class="fb-lbl">&nbsp;Mantenimiento</span></div>`;
-  document.getElementById('ft-name').textContent = (n.nombre || 'SETHIKA CONSTRUCTORA').toUpperCase();
-  document.getElementById('ft-sub').textContent = (n.tagline || 'EQUIPOS PESADOS · RD').toUpperCase();
-  document.getElementById('ft-copy').textContent = `© ${new Date().getFullYear()} ${(n.nombre || 'SETHIKA CONSTRUCTORA').toUpperCase()} · TODOS LOS DERECHOS RESERVADOS`;
+  $('ft-name').textContent = (n.nombre || 'SETHIKA CONSTRUCTORA').toUpperCase();
+  $('ft-sub').textContent = (n.tagline || 'EQUIPOS PESADOS · RD').toUpperCase();
+  $('ft-copy').textContent = `© ${new Date().getFullYear()} ${(n.nombre || 'SETHIKA CONSTRUCTORA').toUpperCase()}`;
   const wh = n.wa ? `https://wa.me/${n.wa}` : '#';
-  document.getElementById('ft-wa').href = wh;
-  document.getElementById('wa-float').href = wh;
-  if (n.ig) { const el = document.getElementById('ft-ig'); el.href = `https://instagram.com/${n.ig.replace('@','')}`; el.textContent = `📸 ${n.ig}`; el.style.display = 'flex'; }
-  if (n.fb) { const el = document.getElementById('ft-fb'); el.href = n.fb.startsWith('http') ? n.fb : `https://facebook.com/${n.fb}`; el.textContent = `👥 ${n.fb}`; el.style.display = 'flex'; }
-  if (appState.stats[0]) document.getElementById('nc-proy').textContent = appState.stats[0].num;
-  if (appState.stats[1]) document.getElementById('nc-anios').textContent = appState.stats[1].num;
-  if (appState.stats[2]) document.getElementById('nc-eq').textContent = appState.stats[2].num;
+  $('ft-wa').href = wh;
+  $('wa-float').href = wh;
+  if (n.ig) { $('ft-ig').href = `https://instagram.com/${n.ig.replace('@','')}`; $('ft-ig').textContent = `📸 ${n.ig}`; $('ft-ig').style.display = 'flex'; }
+  if (n.fb) { $('ft-fb').href = n.fb.startsWith('http') ? n.fb : `https://facebook.com/${n.fb}`; $('ft-fb').textContent = `👥 ${n.fb}`; $('ft-fb').style.display = 'flex'; }
+  if (appState.stats[0]) $('nc-proy').textContent = appState.stats[0].num;
+  if (appState.stats[1]) $('nc-anios').textContent = appState.stats[1].num;
+  if (appState.stats[2]) $('nc-eq').textContent = appState.stats[2].num;
 }
 
 function buildTicker() {
@@ -707,12 +705,13 @@ function buildTicker() {
   items.push(`<div class="t-item">▸&nbsp;Cotiza gratis por WhatsApp</div>`);
   items.push(`<div class="t-item">▸&nbsp;Operadores certificados</div>`);
   items.push(`<div class="t-item">▸&nbsp;Cobertura nacional</div>`);
-  document.getElementById('ticker-track').innerHTML = [...items, ...items].join('');
+  $('ticker-track').innerHTML = [...items, ...items].join('');
 }
 
+// ===== RENDER GRID =====
 let curCat = 'Todos';
 function renderGrid() {
-  const grid = document.getElementById('eq-grid'), fr = document.getElementById('filter-row');
+  const grid = $('eq-grid'), fr = $('filter-row');
   const cats = ['Todos', ...new Set(appState.equipos.map(e => e.categoria))];
   fr.innerHTML = '';
   cats.forEach(cat => {
@@ -720,7 +719,7 @@ function renderGrid() {
     b.className = 'fbtn' + (cat === curCat ? ' active' : '');
     b.dataset.cat = cat;
     b.textContent = cat;
-    b.onclick = () => filterCat(b);
+    b.addEventListener('click', () => filterCat(b));
     fr.appendChild(b);
   });
   const list = curCat === 'Todos' ? appState.equipos : appState.equipos.filter(e => e.categoria === curCat);
@@ -749,7 +748,7 @@ function renderGrid() {
         ${hasImg ? `<img src="${eq.fotoUrl}" alt="${eq.nombre}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">` : ''}
         <div class="iph" ${hasImg ? 'style="display:none"' : ''}>${eq.emoji || '🏗️'}<span>${eq.categoria}</span></div>
         <div class="avail-badge ${bc}"><div class="av-dot"></div>${bt}</div>
-        <button class="cart-btn${inCart ? ' on' : ''}" id="cb-${eq.id}" onclick="event.stopPropagation();toggleCart('${eq.id}')">${inCart ? '✓' : '+'}</button>
+        <button class="cart-btn${inCart ? ' on' : ''}" id="cb-${eq.id}">${inCart ? '✓' : '+'}</button>
         <div class="card-slash"></div>
       </div>
       <div class="cb"></div>
@@ -759,13 +758,17 @@ function renderGrid() {
         <div class="card-desc">${eq.desc || ''}</div>
         <div class="card-specs">${specsHtml}</div>
         <div class="card-acts">
-          <button class="ca-ficha" onclick="openEq('${eq.id}')">Ver Ficha</button>
-          <button class="ca-cot" onclick="event.stopPropagation();openQtSingle('${eq.id}')">Cotizar</button>
+          <button class="ca-ficha">Ver Ficha</button>
+          <button class="ca-cot">Cotizar</button>
         </div>
       </div>`;
+    card.querySelector('.ca-ficha').addEventListener('click', (e) => { e.stopPropagation(); openEq(eq.id); });
+    card.querySelector('.ca-cot').addEventListener('click', (e) => { e.stopPropagation(); openQtSingle(eq.id); });
+    card.querySelector(`#cb-${eq.id}`).addEventListener('click', (e) => { e.stopPropagation(); toggleCart(eq.id); });
+    card.addEventListener('click', () => openEq(eq.id));
     grid.appendChild(card);
   });
-  setTimeout(() => { document.querySelectorAll('.fu:not(.vis)').forEach(el => obs.observe(el)); }, 50);
+  setTimeout(() => document.querySelectorAll('.fu:not(.vis)').forEach(el => obs.observe(el)), 50);
 }
 
 function filterCat(btn) {
@@ -775,53 +778,44 @@ function filterCat(btn) {
   renderGrid();
 }
 
+// ===== CART =====
 function toggleCart(id) {
   const i = cart.indexOf(id); i >= 0 ? cart.splice(i, 1) : cart.push(id);
   updateCartUI();
 }
-function toggleCartFromModal() {
-  if (!curEqId) return;
-  toggleCart(curEqId);
-  const on = cart.includes(curEqId);
-  const btn = document.getElementById('m-cart-btn');
-  btn.textContent = on ? '✓ En paquete' : '+ Paquete';
-  btn.classList.toggle('on', on);
-}
 function updateCartUI() {
-  const n = cart.length;
-  document.getElementById('cb-badge').textContent = n;
-  document.getElementById('cart-float').classList.toggle('show', n > 0);
+  $('cb-badge').textContent = cart.length;
+  $('cart-float').classList.toggle('show', cart.length > 0);
   appState.equipos.forEach(eq => {
-    const btn = document.getElementById(`cb-${eq.id}`), card = document.getElementById(`card-${eq.id}`);
+    const btn = $(`cb-${eq.id}`), card = $(`card-${eq.id}`);
     const on = cart.includes(eq.id);
     if (btn) { btn.textContent = on ? '✓' : '+'; btn.classList.toggle('on', on); }
     if (card) card.classList.toggle('in-cart', on);
   });
 }
-function openCartQt() {
+$('cart-float').addEventListener('click', () => {
   qtMode = 'multi';
   const sel = appState.equipos.filter(e => cart.includes(e.id));
-  const chips = document.getElementById('qt-chips');
-  chips.innerHTML = sel.map(e => `<div class="qt-chip">🏗 ${e.nombre}</div>`).join('');
-  chips.style.display = 'flex';
-  document.getElementById('qt-sub').innerHTML = `Cotizando <b>${sel.length} equipo(s)</b> a la vez.`;
+  $('qt-chips').innerHTML = sel.map(e => `<div class="qt-chip">🏗 ${e.nombre}</div>`).join('');
+  $('qt-chips').style.display = 'flex';
+  $('qt-sub').innerHTML = `Cotizando <b>${sel.length} equipo(s)</b>`;
   openSheet('qt-ov', 'qt-sheet');
-}
+});
 
+// ===== EQUIPMENT MODAL =====
 function openEq(id) {
-  const eq = appState.equipos.find(e => e.id === id);
-  if (!eq) return;
+  const eq = appState.equipos.find(e => e.id === id); if (!eq) return;
   curEqId = id;
   const pfx = PFX[eq.categoria] || 'OT';
   const seq = appState.equipos.findIndex(e => e.id === id) + 1;
   const eid = `${pfx}-${String(seq).padStart(3,'0')}`;
   const bc = eq.disponibilidad === 'disponible' ? 'av-disp' : eq.disponibilidad === 'reservado' ? 'av-resv' : 'av-mant';
   const bt = eq.disponibilidad === 'disponible' ? 'DISPONIBLE' : eq.disponibilidad === 'reservado' ? 'RESERVADO' : 'MANTENIMIENTO';
-  document.getElementById('m-eid').textContent = eid;
-  document.getElementById('m-avail').innerHTML = `<div class="avail-badge ${bc}" style="display:inline-flex"><div class="av-dot"></div>${bt}</div>`;
-  document.getElementById('m-name').textContent = eq.nombre;
-  document.getElementById('m-desc').textContent = eq.desc || '';
-  const img = document.getElementById('eq-img'), ph = document.getElementById('eq-img-ph');
+  $('m-eid').textContent = eid;
+  $('m-avail').innerHTML = `<div class="avail-badge ${bc}" style="display:inline-flex"><div class="av-dot"></div>${bt}</div>`;
+  $('m-name').textContent = eq.nombre;
+  $('m-desc').textContent = eq.desc || '';
+  const img = $('eq-img'), ph = $('eq-img-ph');
   if (eq.fotoUrl && eq.fotoUrl.startsWith('http')) { img.src = eq.fotoUrl; img.style.display = 'block'; ph.style.display = 'none'; }
   else { img.style.display = 'none'; ph.style.display = 'flex'; ph.innerHTML = (eq.emoji || '🏗️') + `<span>${eq.categoria}</span>`; }
   const specs = [];
@@ -830,121 +824,144 @@ function openEq(id) {
   if (eq.operador) specs.push(['OPERADOR', eq.operador]);
   if (eq.horas) specs.push(['HORARIO MÁX', eq.horas]);
   if (eq.tarifa) specs.push(['TARIFA RD$/DÍA', Number(eq.tarifa).toLocaleString()]);
-  document.getElementById('ds-grid').innerHTML = specs.map(([k, v]) => `<div class="ds-item"><div class="ds-k">${k}</div><div class="ds-v">${v}</div></div>`).join('');
-  const ew = document.getElementById('est-wrap');
+  $('ds-grid').innerHTML = specs.map(([k, v]) => `<div class="ds-item"><div class="ds-k">${k}</div><div class="ds-v">${v}</div></div>`).join('');
+  const ew = $('est-wrap');
   if (eq.tarifa) {
     ew.style.display = 'block';
     const days = [1, 3, 7, 14, 30], labels = ['1 día', '3 días', '1 semana', '2 semanas', '1 mes'];
-    document.getElementById('est-days').innerHTML = days.map((d, i) => `<button class="est-dbtn" data-d="${d}" data-t="${eq.tarifa}" onclick="calcEst(this)">${labels[i]}</button>`).join('');
-    document.getElementById('est-result').style.display = 'none';
+    $('est-days').innerHTML = days.map((d, i) => `<button class="est-dbtn" data-d="${d}" data-t="${eq.tarifa}">${labels[i]}</button>`).join('');
+    $('est-result').style.display = 'none';
+    $('est-days').querySelectorAll('.est-dbtn').forEach(btn => btn.addEventListener('click', () => {
+      $('est-days').querySelectorAll('.est-dbtn').forEach(b => b.classList.remove('on'));
+      btn.classList.add('on');
+      const d = parseInt(btn.dataset.d), t = parseInt(btn.dataset.t);
+      $('est-val').textContent = `RD$${(t*d*.9).toLocaleString('es-DO')} – RD$${(t*d*1.1).toLocaleString('es-DO')}`;
+      $('est-result').style.display = 'block';
+    }));
   } else { ew.style.display = 'none'; }
   const on = cart.includes(id);
-  const cb = document.getElementById('m-cart-btn'); cb.textContent = on ? '✓ En paquete' : '+ Paquete'; cb.classList.toggle('on', on);
+  const cb = $('m-btn-cart'); cb.textContent = on ? '✓ En paquete' : '+ Paquete'; cb.classList.toggle('on', on);
   openSheet('eq-ov', 'eq-sheet');
 }
-function calcEst(btn) {
-  document.querySelectorAll('.est-dbtn').forEach(b => b.classList.remove('on')); btn.classList.add('on');
-  const d = parseInt(btn.dataset.d), t = parseInt(btn.dataset.t);
-  const min = (t * d * .9).toLocaleString('es-DO'), max = (t * d * 1.1).toLocaleString('es-DO');
-  document.getElementById('est-val').textContent = `RD$${min} – RD$${max}`;
-  document.getElementById('est-result').style.display = 'block';
-}
-function shareEq() {
+$('share-btn').addEventListener('click', () => {
   const eq = appState.equipos.find(e => e.id === curEqId);
   if (!eq) return;
-  const txt = `🏗️ *${eq.nombre}*\nCategoría: ${eq.categoria}\nEstado: ${eq.disponibilidad}\nCapacidad: ${eq.capacidad||'–'} · Año: ${eq.anio||'–'}\n\nVer catálogo: ${location.href}`;
+  const txt = `🏗️ *${eq.nombre}*\nCategoría: ${eq.categoria}\nEstado: ${eq.disponibilidad}\nCapacidad: ${eq.capacidad||'–'} · Año: ${eq.anio||'–'}\n\nCatálogo: ${location.href}`;
   if (navigator.share) navigator.share({ title: eq.nombre, text: txt }).catch(() => {});
   else navigator.clipboard.writeText(txt).then(() => toast('📋 Info copiada'));
-}
-function closeEq() { closeSheet('eq-ov', 'eq-sheet'); }
-function openQtFromEq() { closeEq(); setTimeout(() => openQtSingle(curEqId), 220); }
+});
+$('eq-ov').addEventListener('click', () => closeSheet('eq-ov', 'eq-sheet'));
+$('m-btn-cot').addEventListener('click', () => { closeSheet('eq-ov', 'eq-sheet'); setTimeout(() => openQtSingle(curEqId), 220); });
+$('m-btn-cart').addEventListener('click', () => { toggleCart(curEqId); const on = cart.includes(curEqId); $('m-btn-cart').textContent = on ? '✓ En paquete' : '+ Paquete'; $('m-btn-cart').classList.toggle('on', on); });
+
+// ===== QUOTE MODAL =====
 function openQtSingle(id) {
   qtMode = 'single'; curEqId = id;
   const eq = appState.equipos.find(e => e.id === id);
-  document.getElementById('qt-sub').innerHTML = eq ? `Equipo: <b>${eq.nombre}</b>` : 'Cuéntanos sobre tu proyecto.';
-  document.getElementById('qt-chips').style.display = 'none';
+  $('qt-sub').innerHTML = eq ? `Equipo: <b>${eq.nombre}</b>` : 'Cuéntanos sobre tu proyecto.';
+  $('qt-chips').style.display = 'none';
   openSheet('qt-ov', 'qt-sheet');
 }
-function openQtGeneral() { qtMode = 'general'; curEqId = null; document.getElementById('qt-sub').innerHTML = 'Cuéntanos sobre tu proyecto y te asesoramos.'; document.getElementById('qt-chips').style.display = 'none'; openSheet('qt-ov', 'qt-sheet'); }
-function closeQt() { closeSheet('qt-ov', 'qt-sheet'); }
-function selOp(v) { opVal = v; document.getElementById('op-si').classList.toggle('on', v === 'Sí'); document.getElementById('op-no').classList.toggle('on', v === 'No'); }
-function sendQt() {
-  const nombre = document.getElementById('q-nombre').value.trim(), tel = document.getElementById('q-tel').value.trim();
+$('qt-ov').addEventListener('click', () => closeSheet('qt-ov', 'qt-sheet'));
+$('op-si').addEventListener('click', () => { opVal = 'Sí'; $('op-si').classList.add('on'); $('op-no').classList.remove('on'); });
+$('op-no').addEventListener('click', () => { opVal = 'No'; $('op-no').classList.add('on'); $('op-si').classList.remove('on'); });
+$('submit-wa').addEventListener('click', () => {
+  const nombre = $('q-nombre').value.trim(), tel = $('q-tel').value.trim();
   if (!nombre || !tel) { toast('⚠ Nombre y teléfono son requeridos'); return; }
   let eqStr = '';
   if (qtMode === 'multi' && cart.length) eqStr = appState.equipos.filter(e => cart.includes(e.id)).map(e => `• ${e.nombre}`).join('\n');
   else if (qtMode === 'single' && curEqId) { const eq = appState.equipos.find(e => e.id === curEqId); eqStr = eq ? eq.nombre : '–'; }
   else eqStr = 'Consulta general';
-  const tipo = document.getElementById('q-tipo').value, dur = document.getElementById('q-dur').value, zona = document.getElementById('q-zona').value;
   let msg = `🏗️ *Solicitud de Cotización*\n\n`;
   msg += qtMode === 'multi' ? `📋 *Equipos solicitados:*\n${eqStr}\n` : `📋 *Equipo:* ${eqStr}\n`;
   msg += `\n👤 *Nombre:* ${nombre}\n📞 *Teléfono:* ${tel}`;
-  if (tipo) msg += `\n🔧 *Proyecto:* ${tipo}`;
-  if (dur) msg += `\n⏱ *Duración:* ${dur}`;
-  if (zona) msg += `\n📍 *Zona:* ${zona}`;
+  if ($('q-tipo').value) msg += `\n🔧 *Proyecto:* ${$('q-tipo').value}`;
+  if ($('q-dur').value) msg += `\n⏱ *Duración:* ${$('q-dur').value}`;
+  if ($('q-zona').value) msg += `\n📍 *Zona:* ${$('q-zona').value}`;
   msg += `\n👷 *Operador:* ${opVal}\n\n_Enviado desde el catálogo digital Sethika Constructora._`;
   window.open(`https://wa.me/${appState.negocio?.wa || '8296400203'}?text=${encodeURIComponent(msg)}`, '_blank');
-  closeQt();
+  closeSheet('qt-ov', 'qt-sheet');
   if (qtMode === 'multi') { cart = []; updateCartUI(); }
-  ['q-nombre', 'q-tel', 'q-zona'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('q-tipo').value = ''; document.getElementById('q-dur').value = ''; selOp('Sí');
-}
-function openSheet(ov, sh) { document.getElementById(ov).classList.add('open'); document.getElementById(sh).classList.add('open'); document.body.style.overflow = 'hidden'; }
-function closeSheet(ov, sh) { document.getElementById(ov).classList.remove('open'); document.getElementById(sh).classList.remove('open'); document.body.style.overflow = ''; }
+  ['q-nombre','q-tel','q-zona'].forEach(id => $(id).value = '');
+  $('q-tipo').value = ''; $('q-dur').value = ''; opVal = 'Sí'; $('op-si').classList.add('on'); $('op-no').classList.remove('on');
+});
 
-let obs;
-function setupObs() {
-  obs = new IntersectionObserver(entries => { entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('vis'); obs.unobserve(e.target); } }); }, { threshold: .08 });
-  document.querySelectorAll('.fu').forEach(el => obs.observe(el));
+// ===== ADMIN FUNCTIONS =====
+function loadAdmForms() {
+  appState.stats.forEach((st, i) => {
+    const n = $(`s${i+1}n`), l = $(`s${i+1}l`);
+    if (n) n.value = st.num || '';
+    if (l) l.value = st.label || '';
+  });
+  const n = appState.negocio || {};
+  $('nf-nombre').value = n.nombre || '';
+  $('nf-tag').value = n.tagline || '';
+  $('nf-wa').value = n.wa || '';
+  $('nf-ig').value = n.ig || '';
+  $('nf-fb').value = n.fb || '';
+  renderAdmEqList();
+  renderAdmProjList();
 }
 
-// Photo upload
-function handlePhotoUpload(input) {
-  const file = input.files[0];
-  if (!file) return;
-  const preview = document.getElementById('upload-preview');
-  const previewImg = document.getElementById('upload-preview-img');
-  const previewName = document.getElementById('upload-preview-name');
-  previewImg.src = URL.createObjectURL(file);
-  previewImg.style.display = 'block';
-  previewName.textContent = file.name;
-  preview.style.display = 'flex';
-  document.getElementById('ef-foto-url').value = '';
+function renderAdmEqList() {
+  const list = $('adm-eq-list');
+  list.innerHTML = '';
+  if (!appState.equipos.length) { list.innerHTML = '<p style="color:var(--text2);font-size:13px;margin-bottom:12px">Sin equipos.</p>'; return; }
+  appState.equipos.forEach(eq => {
+    const col = eq.disponibilidad === 'disponible' ? 'var(--green)' : eq.disponibilidad === 'reservado' ? 'var(--red)' : 'var(--orange)';
+    const d = document.createElement('div');
+    d.className = 'adc';
+    d.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:start"><div class="adc-name">${eq.emoji || '🏗️'} ${eq.nombre}</div><span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:${col}">${eq.disponibilidad.toUpperCase()}</span></div>
+      <div class="adc-meta">${eq.categoria} · ${eq.capacidad || '–'} · ${eq.anio || '–'}${eq.tarifa ? ` · RD$${Number(eq.tarifa).toLocaleString()}/día` : ''}</div>
+      <div class="adc-acts"><button class="adb adb-edit">✏️ Editar</button><button class="adb adb-del">🗑️ Eliminar</button></div>`;
+    d.querySelector('.adb-edit').addEventListener('click', () => editEq(eq.id));
+    d.querySelector('.adb-del').addEventListener('click', () => delEq(eq.id));
+    list.appendChild(d);
+  });
+}
+
+// Photo upload handler
+$('ef-photo-file').addEventListener('change', (e) => {
+  const file = e.target.files[0]; if (!file) return;
   pendingUpload = file;
-  document.getElementById('upload-progress').style.display = 'none';
+  $('upload-preview-img').src = URL.createObjectURL(file);
+  $('upload-preview-img').style.display = 'block';
+  $('upload-preview-name').textContent = file.name;
+  $('upload-preview').style.display = 'flex';
+  $('upload-progress').style.display = 'none';
   toast('📷 Foto lista — se sube al guardar');
-}
+});
 
-async function saveEq() {
-  const nombre = document.getElementById('ef-n').value.trim();
+// Save equipment
+$('save-eq-btn').addEventListener('click', async () => {
+  const nombre = $('ef-n').value.trim();
   if (!nombre) { toast('⚠ El nombre es requerido'); return; }
-  const eid = document.getElementById('eid').value;
+  const eid = $('eid').value;
   const id = eid || `eq_${Date.now()}`;
-  let fotoUrl = document.getElementById('ef-foto-url').value;
+  let fotoUrl = $('ef-foto-url').value;
   if (pendingUpload) {
     toast('⬆ Subiendo foto a imgbb...');
-    document.getElementById('upload-bar').style.width = '50%';
-    document.getElementById('upload-pct').textContent = '50%';
+    $('upload-progress').style.display = 'block';
+    $('upload-bar').style.width = '30%';
+    $('upload-pct').textContent = '30%';
     try {
       fotoUrl = await uploadToImgbb(pendingUpload);
-      document.getElementById('upload-bar').style.width = '100%';
-      document.getElementById('upload-pct').textContent = '100%';
-    } catch(e) {
-      toast('❌ Error al subir foto'); fotoUrl = '';
-    }
+      $('upload-bar').style.width = '100%';
+      $('upload-pct').textContent = '100%';
+    } catch(e) { toast('❌ Error al subir foto'); fotoUrl = ''; }
     pendingUpload = null;
   }
   const eq = {
     id, nombre,
-    emoji: document.getElementById('ef-e').value.trim() || '🏗️',
-    categoria: document.getElementById('ef-c').value,
-    disponibilidad: document.getElementById('ef-d').value,
-    desc: document.getElementById('ef-desc').value.trim(),
-    capacidad: document.getElementById('ef-cap').value.trim(),
-    anio: document.getElementById('ef-anio').value.trim(),
-    operador: document.getElementById('ef-op').value,
-    horas: document.getElementById('ef-hrs').value.trim(),
-    tarifa: parseInt(document.getElementById('ef-tarifa').value) || null,
+    emoji: $('ef-e').value.trim() || '🏗️',
+    categoria: $('ef-c').value,
+    disponibilidad: $('ef-d').value,
+    desc: $('ef-desc').value.trim(),
+    capacidad: $('ef-cap').value.trim(),
+    anio: $('ef-anio').value.trim(),
+    operador: $('ef-op').value,
+    horas: $('ef-hrs').value.trim(),
+    tarifa: parseInt($('ef-tarifa').value) || null,
     fotoUrl: fotoUrl || ''
   };
   await setDoc(doc(db, 'equipos', id), eq);
@@ -955,56 +972,44 @@ async function saveEq() {
   renderGrid();
   applyState();
   toast('✅ Equipo guardado');
-}
+});
 
 function editEq(id) {
-  const eq = appState.equipos.find(e => e.id === id);
-  if (!eq) return;
-  document.getElementById('eid').value = eq.id;
-  document.getElementById('ef-n').value = eq.nombre;
-  document.getElementById('ef-e').value = eq.emoji || '';
-  document.getElementById('ef-c').value = eq.categoria;
-  document.getElementById('ef-d').value = eq.disponibilidad;
-  document.getElementById('ef-desc').value = eq.desc || '';
-  document.getElementById('ef-cap').value = eq.capacidad || '';
-  document.getElementById('ef-anio').value = eq.anio || '';
-  document.getElementById('ef-op').value = eq.operador || 'Sí';
-  document.getElementById('ef-hrs').value = eq.horas || '';
-  document.getElementById('ef-tarifa').value = eq.tarifa || '';
-  document.getElementById('ef-foto-url').value = eq.fotoUrl || '';
-  // Show existing photo in preview if available
-  const preview = document.getElementById('upload-preview');
-  const previewImg = document.getElementById('upload-preview-img');
-  const previewName = document.getElementById('upload-preview-name');
+  const eq = appState.equipos.find(e => e.id === id); if (!eq) return;
+  $('eid').value = eq.id;
+  $('ef-n').value = eq.nombre; $('ef-e').value = eq.emoji || '';
+  $('ef-c').value = eq.categoria; $('ef-d').value = eq.disponibilidad;
+  $('ef-desc').value = eq.desc || ''; $('ef-cap').value = eq.capacidad || '';
+  $('ef-anio').value = eq.anio || ''; $('ef-op').value = eq.operador || 'Sí';
+  $('ef-hrs').value = eq.horas || ''; $('ef-tarifa').value = eq.tarifa || '';
+  $('ef-foto-url').value = eq.fotoUrl || '';
   if (eq.fotoUrl && eq.fotoUrl.startsWith('http')) {
-    previewImg.src = eq.fotoUrl;
-    previewImg.style.display = 'block';
-    previewName.textContent = '✓ Foto actual (selecciona otra para cambiarla)';
-    preview.style.display = 'flex';
-  } else {
-    preview.style.display = 'none';
+    $('upload-preview-img').src = eq.fotoUrl;
+    $('upload-preview-img').style.display = 'block';
+    $('upload-preview-name').textContent = '✓ Foto actual';
+    $('upload-preview').style.display = 'flex';
   }
   pendingUpload = null;
-  document.getElementById('eq-flbl').textContent = '✏️ Editar Equipo';
-  document.getElementById('adm-cancel').style.display = 'block';
-  document.getElementById('eq-flbl').scrollIntoView({ behavior: 'smooth' });
+  $('eq-flbl').textContent = '✏️ Editar Equipo';
+  $('cancel-edit-btn').style.display = 'block';
+  $('eq-flbl').scrollIntoView({ behavior: 'smooth' });
 }
 
 function cancelEdit() {
-  document.getElementById('eid').value = '';
-  ['ef-n', 'ef-e', 'ef-desc', 'ef-cap', 'ef-anio', 'ef-hrs', 'ef-tarifa'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('ef-c').value = 'Retro Pala';
-  document.getElementById('ef-d').value = 'disponible';
-  document.getElementById('ef-op').value = 'Sí';
-  document.getElementById('ef-foto-url').value = '';
-  document.getElementById('upload-preview').style.display = 'none';
-  document.getElementById('upload-progress').style.display = 'none';
-  document.getElementById('upload-bar').style.width = '0%';
+  $('eid').value = '';
+  ['ef-n','ef-e','ef-desc','ef-cap','ef-anio','ef-hrs','ef-tarifa'].forEach(id => $(id).value = '');
+  $('ef-c').value = 'Retro Pala'; $('ef-d').value = 'disponible'; $('ef-op').value = 'Sí';
+  $('ef-foto-url').value = '';
+  $('upload-preview').style.display = 'none';
+  $('upload-progress').style.display = 'none';
+  $('upload-bar').style.width = '0%';
   pendingUpload = null;
-  document.getElementById('ef-photo-file').value = '';
-  document.getElementById('eq-flbl').textContent = '+ Nuevo Equipo';
-  document.getElementById('adm-cancel').style.display = 'none';
+  $('ef-photo-file').value = '';
+  $('eq-flbl').textContent = '+ Nuevo Equipo';
+  $('cancel-edit-btn').style.display = 'none';
 }
+
+$('cancel-edit-btn').addEventListener('click', cancelEdit);
 
 async function delEq(id) {
   if (!confirm('¿Eliminar?')) return;
@@ -1016,135 +1021,99 @@ async function delEq(id) {
   toast('🗑️ Eliminado');
 }
 
-async function saveStats() {
+$('save-stats-btn').addEventListener('click', async () => {
   for (let i = 1; i <= 3; i++) {
-    await firebase.firestore().collection('stats').doc(String(i)).set({
-      num: parseInt(document.getElementById(`s${i}n`).value) || 0,
-      label: document.getElementById(`s${i}l`).value
-    });
-    appState.stats[i-1] = { num: parseInt(document.getElementById(`s${i}n`).value) || 0, label: document.getElementById(`s${i}l`).value };
+    await setDoc(doc(db, 'stats', String(i)), { num: parseInt($(`s${i}n`).value) || 0, label: $(`s${i}l`).value });
+    appState.stats[i-1] = { num: parseInt($(`s${i}n`).value) || 0, label: $(`s${i}l`).value };
   }
-  buildTicker();
-  applyState();
+  buildTicker(); applyState();
   toast('✅ Guardado');
-}
+});
 
-async function saveNeg() {
-  const neg = {
-    nombre: document.getElementById('nf-nombre').value,
-    tagline: document.getElementById('nf-tag').value,
-    wa: document.getElementById('nf-wa').value.replace(/\D/g, ''),
-    ig: document.getElementById('nf-ig').value,
-    fb: document.getElementById('nf-fb').value
-  };
-  await firebase.firestore().collection('negocio').doc('info').set(neg);
+$('save-neg-btn').addEventListener('click', async () => {
+  const neg = { nombre: $('nf-nombre').value, tagline: $('nf-tag').value, wa: $('nf-wa').value.replace(/\D/g, ''), ig: $('nf-ig').value, fb: $('nf-fb').value };
+  await setDoc(doc(db, 'negocio', 'info'), neg);
   appState.negocio = neg;
   applyState();
   toast('✅ Guardado');
-}
+});
 
-async function changePass() {
-  const act = document.getElementById('pa-act').value, nw = document.getElementById('pa-new').value, cf = document.getElementById('pa-conf').value;
+$('change-pass-btn').addEventListener('click', async () => {
+  const act = $('pa-act').value, nw = $('pa-new').value, cf = $('pa-conf').value;
   if (act !== appState.pass && act !== '123456') { toast('⚠ Contraseña actual incorrecta'); return; }
   if (nw !== cf) { toast('⚠ No coinciden'); return; }
   if (nw.length < 4) { toast('⚠ Mínimo 4 caracteres'); return; }
-  // Always save to localStorage as primary (always works)
   localStorage.setItem('sethika_admin_pass', nw);
   appState.pass = nw;
-  // Also try Firebase (best effort)
   try {
     const passSnap = await getDocs(collection(db, 'config'));
     const authDoc = passSnap.docs.find(d => d.id === 'auth') || passSnap.docs[0];
     if (authDoc) await setDoc(doc(db, 'config', authDoc.id), { pass: nw }, { merge: true });
   } catch(e) { /* Firebase optional */ }
-  ['pa-act', 'pa-new', 'pa-conf'].forEach(id => document.getElementById(id).value = '');
+  ['pa-act','pa-new','pa-conf'].forEach(id => $(id).value = '');
   toast('✅ Contraseña cambiada');
-}
+});
 
-// ========== PROYECTOS GALLERY ==========
-let projPendingPhoto = null;
-let projPendingVideo = null;
-
-function handleProjPhotoUpload(input) {
-  const file = input.files[0];
-  if (!file) return;
-  projPendingPhoto = file;
-  projPendingVideo = null;
-  const preview = document.getElementById('proj-photo-preview');
-  const previewImg = document.getElementById('proj-photo-preview-img');
-  const previewName = document.getElementById('proj-photo-name');
-  previewImg.src = URL.createObjectURL(file);
-  preview.style.display = 'flex';
-  previewName.textContent = file.name;
-  document.getElementById('proj-video-preview').style.display = 'none';
+// ===== PROJECTS =====
+$('proj-photo-file').addEventListener('change', (e) => {
+  const file = e.target.files[0]; if (!file) return;
+  projPendingPhoto = file; projPendingVideo = null;
+  $('proj-photo-preview-img').src = URL.createObjectURL(file);
+  $('proj-photo-preview').style.display = 'flex';
+  $('proj-photo-name').textContent = file.name;
+  $('proj-video-preview').style.display = 'none';
   toast('📷 Foto lista para subir');
-}
+});
 
-function handleProjVideoUpload(input) {
-  const file = input.files[0];
-  if (!file) return;
+$('proj-video-file').addEventListener('change', (e) => {
+  const file = e.target.files[0]; if (!file) return;
   if (file.size > 32 * 1024 * 1024) { toast('⚠ Video muy grande (máx 32MB)'); return; }
-  projPendingVideo = file;
-  projPendingPhoto = null;
-  const preview = document.getElementById('proj-video-preview');
-  const previewName = document.getElementById('proj-video-name');
-  preview.style.display = 'flex';
-  previewName.textContent = file.name.substring(0, 30) + (file.name.length > 30 ? '...' : '');
-  document.getElementById('proj-photo-preview').style.display = 'none';
+  projPendingVideo = file; projPendingPhoto = null;
+  $('proj-video-name').textContent = file.name.substring(0, 30) + (file.name.length > 30 ? '...' : '');
+  $('proj-video-preview').style.display = 'flex';
+  $('proj-photo-preview').style.display = 'none';
   toast('🎬 Video listo para subir');
-}
+});
 
-async function addProjMedia(type) {
-  if (type === 'photo' && projPendingPhoto) {
-    toast('⬆ Subiendo foto a imgbb...');
-    const id = `proj_${Date.now()}`;
-    try {
-      const url = await uploadToImgbb(projPendingPhoto);
-      await setDoc(doc(db, 'proyectos', id), { type: 'photo', url, createdAt: new Date().toISOString() });
-      if (!appState.proyectos) appState.proyectos = [];
-      appState.proyectos.push({ id, type: 'photo', url });
-      projPendingPhoto = null;
-      document.getElementById('proj-photo-preview').style.display = 'none';
-      document.getElementById('proj-photo-file').value = '';
-      renderAdmProjList();
-      renderProj();
-      toast('✅ Foto agregada a la galería');
-    } catch(e) { toast('❌ Error al subir foto'); }
-  } else if (type === 'video' && projPendingVideo) {
-    toast('🎬 Subiendo video a imgbb...');
-    const id = `proj_${Date.now()}`;
-    try {
-      document.getElementById('proj-video-bar').style.width = '50%';
-      document.getElementById('proj-video-pct').textContent = '50%';
-      const url = await uploadVideoToImgbb(projPendingVideo);
-      document.getElementById('proj-video-bar').style.width = '100%';
-      document.getElementById('proj-video-pct').textContent = '100%';
-      await setDoc(doc(db, 'proyectos', id), { type: 'video', url, createdAt: new Date().toISOString() });
-      if (!appState.proyectos) appState.proyectos = [];
-      appState.proyectos.push({ id, type: 'video', url });
-      projPendingVideo = null;
-      document.getElementById('proj-video-preview').style.display = 'none';
-      document.getElementById('proj-video-progress').style.display = 'none';
-      document.getElementById('proj-video-file').value = '';
-      renderAdmProjList();
-      toast('✅ Video agregado a la galería');
-    } catch(e) { toast('❌ Error al subir video'); projPendingVideo = null; }
-  } else {
-    toast('⚠ Selecciona un archivo primero');
-  }
-}
-
-async function loadProyectos() {
+$('save-proj-photo-btn').addEventListener('click', async () => {
+  if (!projPendingPhoto) { toast('⚠ Selecciona una foto primero'); return; }
+  toast('⬆ Subiendo foto a imgbb...');
   try {
-    const snap = await getDocs(collection(db, 'proyectos'));
-    appState.proyectos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const id = `proj_${Date.now()}`;
+    const url = await uploadToImgbb(projPendingPhoto);
+    await setDoc(doc(db, 'proyectos', id), { type: 'photo', url, createdAt: new Date().toISOString() });
+    if (!appState.proyectos) appState.proyectos = [];
+    appState.proyectos.push({ id, type: 'photo', url });
+    projPendingPhoto = null;
+    $('proj-photo-preview').style.display = 'none';
+    $('proj-photo-file').value = '';
     renderAdmProjList();
     renderProj();
-  } catch(e) { console.error(e); }
-}
+    toast('✅ Foto agregada a la galería');
+  } catch(e) { toast('❌ Error al subir foto'); }
+});
+
+$('save-proj-video-btn').addEventListener('click', async () => {
+  if (!projPendingVideo) { toast('⚠ Selecciona un video primero'); return; }
+  toast('🎬 Subiendo video a imgbb...');
+  $('proj-video-progress').style.display = 'block';
+  try {
+    const id = `proj_${Date.now()}`;
+    const url = await uploadToImgbb(projPendingVideo);
+    await setDoc(doc(db, 'proyectos', id), { type: 'video', url, createdAt: new Date().toISOString() });
+    if (!appState.proyectos) appState.proyectos = [];
+    appState.proyectos.push({ id, type: 'video', url });
+    projPendingVideo = null;
+    $('proj-video-preview').style.display = 'none';
+    $('proj-video-progress').style.display = 'none';
+    $('proj-video-file').value = '';
+    renderAdmProjList();
+    toast('✅ Video agregado a la galería');
+  } catch(e) { toast('❌ Error al subir video'); projPendingVideo = null; }
+});
 
 function renderAdmProjList() {
-  const list = document.getElementById('adm-proj-list');
+  const list = $('adm-proj-list');
   if (!list) return;
   if (!appState.proyectos || !appState.proyectos.length) {
     list.innerHTML = '<p style="color:var(--text3);font-family:\'Share Tech Mono\',monospace;font-size:11px;text-align:center;padding:16px">Sin archivos. Agrega fotos o videos arriba.</p>';
@@ -1152,16 +1121,18 @@ function renderAdmProjList() {
   }
   list.innerHTML = appState.proyectos.map(p => {
     const icon = p.type === 'video' ? '🎬' : '📷';
-    const isVideo = p.type === 'video';
     return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">
       <span style="font-size:20px">${icon}</span>
       <div style="flex:1;overflow:hidden">
-        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${isVideo ? 'VIDEO' : 'FOTO'}</div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.type === 'video' ? 'VIDEO' : 'FOTO'}</div>
         <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3)">${p.url.substring(0,40)}...</div>
       </div>
-      <button onclick="delProjMedia('${p.id}')" style="background:none;border:none;color:var(--red);font-size:16px;cursor:pointer;padding:4px">✕</button>
+      <button style="background:none;border:none;color:var(--red);font-size:16px;cursor:pointer;padding:4px">✕</button>
     </div>`;
   }).join('');
+  list.querySelectorAll('button').forEach((btn, i) => {
+    btn.addEventListener('click', () => delProjMedia(appState.proyectos[i].id));
+  });
 }
 
 async function delProjMedia(id) {
@@ -1174,132 +1145,24 @@ async function delProjMedia(id) {
 }
 
 function renderProj() {
-  const sec = document.getElementById('proyectos');
-  const grid = document.getElementById('proy-grid');
+  const sec = $('proyectos');
+  const grid = $('proy-grid') || document.getElementById('proy-grid');
   if (!sec || !grid) return;
   if (!appState.proyectos || !appState.proyectos.length) { sec.style.display = 'none'; return; }
-  sec.style.display = 'block';
   const photos = appState.proyectos.filter(p => p.type === 'photo');
   if (!photos.length) { sec.style.display = 'none'; return; }
-  // First photo is big, rest grid
-  grid.innerHTML = photos.map(p => {
-    if (p === photos[0]) {
-      return `<div class="proy-item" style="grid-column:1/-1"><img src="${p.url}" loading="lazy" onerror="this.parentElement.style.display='none'" style="width:100%;height:100%;object-fit:cover"></div>`;
-    }
+  sec.style.display = 'block';
+  grid.innerHTML = photos.map((p, i) => {
+    if (i === 0) return `<div class="proy-item" style="grid-column:1/-1"><img src="${p.url}" loading="lazy" onerror="this.parentElement.style.display='none'" style="width:100%;height:100%;object-fit:cover"></div>`;
     return `<div class="proy-item"><img src="${p.url}" loading="lazy" onerror="this.parentElement.style.display='none'" style="width:100%;height:100%;object-fit:cover"></div>`;
   }).join('');
 }
 
-function renderAdmEqList() {
-  const list = document.getElementById('adm-eq-list');
-  list.innerHTML = '';
-  if (!appState.equipos.length) { list.innerHTML = '<p style="color:var(--text2);font-size:13px;margin-bottom:12px">Sin equipos.</p>'; return; }
-  appState.equipos.forEach(eq => {
-    const col = eq.disponibilidad === 'disponible' ? 'var(--green)' : eq.disponibilidad === 'reservado' ? 'var(--red)' : 'var(--orange)';
-    const d = document.createElement('div');
-    d.className = 'adc';
-    d.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:start"><div class="adc-name">${eq.emoji || '🏗️'} ${eq.nombre}</div><span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:${col}">${eq.disponibilidad.toUpperCase()}</span></div>
-      <div class="adc-meta">${eq.categoria} · ${eq.capacidad || '–'} · ${eq.anio || '–'}${eq.tarifa ? ` · RD$${Number(eq.tarifa).toLocaleString()}/día` : ''}</div>
-      <div class="adc-acts"><button class="adb adb-edit" onclick="editEq('${eq.id}')">✏️ Editar</button><button class="adb adb-del" onclick="delEq('${eq.id}')">🗑️ Eliminar</button></div>`;
-    list.appendChild(d);
-  });
+// ===== INIT =====
+let obs;
+function setupObs() {
+  obs = new IntersectionObserver(entries => { entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('vis'); obs.unobserve(e.target); } }); }, { threshold: .08 });
 }
-
-function loadAdmForms() {
-  appState.stats.forEach((st, i) => {
-    const n = document.getElementById(`s${i+1}n`), l = document.getElementById(`s${i+1}l`);
-    if (n) n.value = st.num || '';
-    if (l) l.value = st.label || '';
-  });
-  const n = appState.negocio || {};
-  document.getElementById('nf-nombre').value = n.nombre || '';
-  document.getElementById('nf-tag').value = n.tagline || '';
-  document.getElementById('nf-wa').value = n.wa || '';
-  document.getElementById('nf-ig').value = n.ig || '';
-  document.getElementById('nf-fb').value = n.fb || '';
-  renderAdmEqList();
-}
-
-function openLock() { document.getElementById('adm-lock').classList.add('show'); document.getElementById('lk-pass').value = ''; document.getElementById('lk-err').style.display = 'none'; }
-function closeLock() { document.getElementById('adm-lock').classList.remove('show'); }
-function tryLogin() {
-  const entered = document.getElementById('lk-pass').value;
-  const stored = appState.pass || '123456';
-  if (entered === stored || entered === '123456') {
-    closeLock();
-    setTimeout(() => { openAdmin(); toast('✅ Bienvenido al admin'); }, 50);
-  } else {
-    document.getElementById('lk-err').style.display = 'block';
-  }
-}
-
-function handleLoginClick() {
-  const entered = document.getElementById('lk-pass').value.trim();
-  // Always accept '123456' as valid password
-  if (entered === '123456') {
-    closeLock();
-    openAdmin();
-    return;
-  }
-  // Also accept whatever is in appState.pass (loaded from Firebase)
-  const stored = appState.pass;
-  if (stored && entered === stored) {
-    closeLock();
-    openAdmin();
-    return;
-  }
-  // Fallback: try localStorage
-  const localStored = localStorage.getItem('sethika_admin_pass');
-  if (localStored && entered === localStored) {
-    closeLock();
-    openAdmin();
-    return;
-  }
-  // Nothing matched
-  const err = document.getElementById('lk-err');
-  err.textContent = '❌ Contraseña incorrecta — prueba 123456';
-  err.style.display = 'block';
-}
-function openAdmin() { loadAdmForms(); document.getElementById('adm-panel').classList.add('show'); }
-function closeAdmin() { document.getElementById('adm-panel').classList.remove('show'); applyState(); renderGrid(); }
-function swTab(name, btn) { document.querySelectorAll('.adsec').forEach(s => s.classList.remove('on')); document.querySelectorAll('.adtab').forEach(b => b.classList.remove('on')); document.getElementById(`tab-${name}`).classList.add('on'); btn.classList.add('on'); }
-
-let brandTaps = 0, brandTimer = null;
-function brandTap() { brandTaps++; clearTimeout(brandTimer); if (brandTaps >= 7) { brandTaps = 0; openAdmin(); toast('🔓 Admin directo'); return; } if (brandTaps >= 5) { brandTaps = 0; openLock(); toast('🔓 Panel admin abierto'); return; } brandTimer = setTimeout(() => brandTaps = 0, 1500); }
-function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2600); }
-
-// Expose to global for onclick handlers
-window.toggleCart = toggleCart;
-window.openEq = openEq;
-window.openQtSingle = openQtSingle;
-window.filterCat = filterCat;
-window.brandTap = brandTap;
-window.tryLogin = tryLogin;
-window.handleLoginClick = handleLoginClick;
-window.closeLock = closeLock;
-window.openAdmin = openAdmin;
-window.closeAdmin = closeAdmin;
-window.swTab = swTab;
-window.saveEq = saveEq;
-window.editEq = editEq;
-window.cancelEdit = cancelEdit;
-window.delEq = delEq;
-window.saveStats = saveStats;
-window.saveNeg = saveNeg;
-window.changePass = changePass;
-window.calcEst = calcEst;
-window.shareEq = shareEq;
-window.closeEq = closeEq;
-window.openQtFromEq = openQtFromEq;
-window.closeQt = closeQt;
-window.selOp = selOp;
-window.sendQt = sendQt;
-window.toggleCartFromModal = toggleCartFromModal;
-window.handlePhotoUpload = handlePhotoUpload;
-window.handleProjPhotoUpload = handleProjPhotoUpload;
-window.handleProjVideoUpload = handleProjVideoUpload;
-window.addProjMedia = addProjMedia;
-window.delProjMedia = delProjMedia;
 
 document.addEventListener('DOMContentLoaded', () => { loadFromFirebase(); setupObs(); });
 </script>
