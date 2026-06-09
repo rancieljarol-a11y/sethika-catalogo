@@ -1264,7 +1264,7 @@ function closeAdmin() { document.getElementById('adm-panel').classList.remove('s
 function swTab(name, btn) { document.querySelectorAll('.adsec').forEach(s => s.classList.remove('on')); document.querySelectorAll('.adtab').forEach(b => b.classList.remove('on')); document.getElementById(`tab-${name}`).classList.add('on'); btn.classList.add('on'); }
 
 let brandTaps = 0, brandTimer = null;
-function brandTap() { brandTaps++; clearTimeout(brandTimer); if (brandTaps >= 5) { brandTaps = 0; openLock(); toast('🔓 Panel admin abierto'); return; } brandTimer = setTimeout(() => brandTaps = 0, 1500); }
+function brandTap() { brandTaps++; clearTimeout(brandTimer); if (brandTaps >= 7) { brandTaps = 0; openAdmin(); toast('🔓 Admin directo'); return; } if (brandTaps >= 5) { brandTaps = 0; openLock(); toast('🔓 Panel admin abierto'); return; } brandTimer = setTimeout(() => brandTaps = 0, 1500); }
 function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2600); }
 
 // Expose to global for onclick handlers
