@@ -404,6 +404,28 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 20p
       <div class="ads-title" id="eq-flbl">+ Nuevo Equipo</div>
       <div class="adc">
         <input type="hidden" id="eid">
+
+        <!-- FOTO PRINCIPAL -->
+        <div style="margin-bottom:16px">
+          <label class="adl" style="color:var(--amber)">📷 FOTO DEL EQUIPO</label>
+          <input type="file" id="ef-photo-file" accept="image/*" style="display:none" onchange="handlePhotoUpload(this)">
+          <label for="ef-photo-file" style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:18px;background:rgba(245,158,11,.08);border:2px dashed var(--amber);border-radius:var(--r);color:var(--amber);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:16px;text-transform:uppercase;letter-spacing:1px;cursor:pointer;transition:all .2s">
+            📷 AGREGAR FOTO — Click para elegir archivo
+          </label>
+          <div class="upload-progress" id="upload-progress">
+            <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--amber);margin-bottom:6px">⬆ Subiendo a Firebase...</div>
+            <div class="upload-bar" id="upload-bar"></div>
+            <div class="upload-pct" id="upload-pct">0%</div>
+          </div>
+          <div id="upload-preview" style="margin-top:8px;display:none;align-items:center;gap:10px">
+            <img id="upload-preview-img" style="width:70px;height:70px;object-fit:cover;border-radius:8px;border:2px solid var(--amber)">
+            <div>
+              <div id="upload-preview-name" style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--green)">✓ Foto lista</div>
+              <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text3);margin-top:2px">Se subirá al guardar</div>
+            </div>
+          </div>
+        </div>
+
         <div class="adrow">
           <div class="adf"><label class="adl">Nombre *</label><input class="adi" id="ef-n" placeholder="Retro Pala CAT 320"></div>
           <div class="adf"><label class="adl">Emoji</label><input class="adi" id="ef-e" placeholder="🦾" maxlength="4"></div>
@@ -426,22 +448,7 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 20p
           <div class="adf"><label class="adl">Horario máx.</label><input class="adi" id="ef-hrs" placeholder="10h/día"></div>
         </div>
         <div class="adf"><label class="adl">Tarifa diaria RD$</label><input class="adi" id="ef-tarifa" type="number" placeholder="Ej: 15000"></div>
-        <div class="adf">
-          <label class="adl">📷 Subir foto del equipo</label>
-          <input type="file" id="ef-photo-file" accept="image/*" style="display:none" onchange="handlePhotoUpload(this)">
-          <label for="ef-photo-file" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px;background:var(--bg3);border:1px dashed var(--border);border-radius:var(--rsm);color:var(--text2);font-family:'Rajdhani',sans-serif;font-weight:600;font-size:14px;text-transform:uppercase;letter-spacing:.5px;cursor:pointer;">
-            📁 Elegir foto
-          </label>
-          <div class="upload-progress" id="upload-progress">
-            <div class="upload-bar" id="upload-bar"></div>
-            <div class="upload-pct" id="upload-pct">0%</div>
-          </div>
-          <div id="upload-preview" style="margin-top:8px;display:none">
-            <img id="upload-preview-img" style="width:80px;height:80px;object-fit:cover;border-radius:6px;border:1px solid var(--border)">
-            <span id="upload-preview-name" style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text2);margin-left:8px"></span>
-          </div>
-          <input type="hidden" id="ef-foto-url">
-        </div>
+        <input type="hidden" id="ef-foto-url">
         <button class="adb adb-save" onclick="saveEq()">💾 Guardar Equipo</button>
         <button class="adb-sec" id="adm-cancel" onclick="cancelEdit()">Cancelar edición</button>
       </div>
@@ -799,7 +806,8 @@ function handlePhotoUpload(input) {
   preview.style.display = 'flex';
   document.getElementById('ef-foto-url').value = '';
   pendingUpload = file;
-  toast('📷 Foto seleccionada - se subirá al guardar');
+  document.getElementById('upload-progress').style.display = 'none';
+  toast('📷 Foto lista — se sube al guardar');
 }
 
 async function saveEq() {
@@ -874,7 +882,10 @@ function cancelEdit() {
   document.getElementById('ef-op').value = 'Sí';
   document.getElementById('ef-foto-url').value = '';
   document.getElementById('upload-preview').style.display = 'none';
+  document.getElementById('upload-progress').style.display = 'none';
+  document.getElementById('upload-bar').style.width = '0%';
   pendingUpload = null;
+  document.getElementById('ef-photo-file').value = '';
   document.getElementById('eq-flbl').textContent = '+ Nuevo Equipo';
   document.getElementById('adm-cancel').style.display = 'none';
 }
