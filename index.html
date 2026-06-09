@@ -251,7 +251,7 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 20p
     <p class="hero-desc">Equipos pesados en renta · Movimiento de tierra · Excavaciones · Demoliciones · Suministro de agregados.</p>
     <div class="hero-fleet" id="hero-fleet"></div>
     <div class="hero-actions">
-      <a href="#catalogo" class="btn-amber">Ver Flota ↓</a>
+      <a href="#catalogo" class="btn-amber" onclick="event.stopPropagation()">Ver Flota ↓</a>
     </div>
   </div>
 </section>
@@ -382,9 +382,9 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 20p
   <div class="lk-mono">// ACCESO RESTRINGIDO</div>
   <div class="lk-title">Panel Admin</div>
   <div class="lk-sub">Ingresa la contraseña</div>
-  <input class="lk-inp" type="password" id="lk-pass" placeholder="••••••" onkeydown="if(event.key==='Enter')tryLogin()">
+  <input class="lk-inp" type="password" id="lk-pass" placeholder="••••••" onkeydown="if(event.key==='Enter')handleLoginClick()">
   <br>
-  <button class="lk-btn" onclick="tryLogin()">Acceder</button>
+  <button class="lk-btn" id="lk-btn-el" onclick="handleLoginClick()">Acceder</button>
   <div class="lk-err" id="lk-err">Contraseña incorrecta</div>
   <br><br>
   <button onclick="closeLock()" style="background:none;border:none;color:var(--text2);font-size:14px;cursor:pointer;">← Volver</button>
@@ -1220,9 +1220,22 @@ function tryLogin() {
   const entered = document.getElementById('lk-pass').value;
   const stored = appState.pass || '123456';
   if (entered === stored || entered === '123456') {
-    closeLock(); openAdmin();
+    closeLock();
+    setTimeout(() => { openAdmin(); toast('✅ Bienvenido al admin'); }, 50);
   } else {
     document.getElementById('lk-err').style.display = 'block';
+  }
+}
+
+function handleLoginClick() {
+  const entered = document.getElementById('lk-pass').value;
+  if (entered === '123456' || entered === appState.pass) {
+    closeLock();
+    setTimeout(() => { openAdmin(); toast('✅ Bienvenido al admin'); }, 100);
+  } else {
+    const err = document.getElementById('lk-err');
+    err.style.display = 'block';
+    err.textContent = '❌ Contraseña incorrecta — prueba 123456';
   }
 }
 function openAdmin() { loadAdmForms(); document.getElementById('adm-panel').classList.add('show'); }
@@ -1230,7 +1243,7 @@ function closeAdmin() { document.getElementById('adm-panel').classList.remove('s
 function swTab(name, btn) { document.querySelectorAll('.adsec').forEach(s => s.classList.remove('on')); document.querySelectorAll('.adtab').forEach(b => b.classList.remove('on')); document.getElementById(`tab-${name}`).classList.add('on'); btn.classList.add('on'); }
 
 let brandTaps = 0, brandTimer = null;
-function brandTap() { brandTaps++; clearTimeout(brandTimer); if (brandTaps >= 5) { brandTaps = 0; openLock(); return; } brandTimer = setTimeout(() => brandTaps = 0, 1500); }
+function brandTap() { brandTaps++; clearTimeout(brandTimer); if (brandTaps >= 5) { brandTaps = 0; openLock(); toast('🔓 Panel admin abierto'); return; } brandTimer = setTimeout(() => brandTaps = 0, 1500); }
 function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2600); }
 
 // Expose to global for onclick handlers
@@ -1240,6 +1253,7 @@ window.openQtSingle = openQtSingle;
 window.filterCat = filterCat;
 window.brandTap = brandTap;
 window.tryLogin = tryLogin;
+window.handleLoginClick = handleLoginClick;
 window.closeLock = closeLock;
 window.openAdmin = openAdmin;
 window.closeAdmin = closeAdmin;
