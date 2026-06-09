@@ -27,7 +27,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
 .scanline{position:absolute;left:0;right:0;height:2px;z-index:4;pointer-events:none;background:linear-gradient(to right,transparent,rgba(245,158,11,.9) 30%,rgba(255,255,255,.7) 50%,rgba(245,158,11,.9) 70%,transparent);animation:scan 2.6s cubic-bezier(.4,0,.6,1) .4s forwards;top:0}
 @keyframes scan{from{top:0;opacity:1}to{top:100%;opacity:0}}
 .hero-topbar{position:absolute;top:20px;left:20px;right:20px;display:flex;align-items:center;justify-content:space-between;z-index:5}
-.hero-brand{font-family:'Share Tech Mono',monospace;font-size:13px;color:var(--text2);letter-spacing:1px}
+.hero-brand{font-family:'Share Tech Mono',monospace;font-size:16px;color:var(--text2);letter-spacing:2px;word-spacing:3px}
 .hero-brand b{color:var(--amber)}
 .status-pill{display:flex;align-items:center;gap:6px;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--green);border:1px solid rgba(63,185,80,.3);padding:5px 10px;border-radius:4px;background:rgba(63,185,80,.08);letter-spacing:1px}
 .s-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 1.8s ease-in-out infinite}
@@ -287,6 +287,13 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 20p
   <p class="nos-text">Empresa dedicada al desarrollo de proyectos de construcción en todo el territorio nacional. Ofrecemos soluciones integrales para viviendas, reformas, remodelaciones, construcciones industriales y servicios de ingeniería.</p>
 </section>
 
+<!-- PROJECTS GALLERY -->
+<section id="proyectos" style="background:var(--bg);border-top:1px solid var(--border);padding:28px 16px;max-width:480px;margin:0 auto;display:none">
+  <span class="sec-label">// obras realizadas</span>
+  <div class="sec-title">Galería de Proyectos</div>
+  <div id="proy-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px"></div>
+</section>
+
 <!-- FOOTER -->
 <footer>
   <div class="ft-name" id="ft-name">SETHIKA CONSTRUCTORA</div>
@@ -393,6 +400,7 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 20p
     <button class="adtab" onclick="swTab('equipos',this)">🏗 Equipos</button>
     <button class="adtab" onclick="swTab('stats',this)">📊 Datos</button>
     <button class="adtab" onclick="swTab('negocio',this)">🏢 Negocio</button>
+    <button class="adtab" onclick="swTab('proyectos',this)">🎬 Proyectos</button>
     <button class="adtab" onclick="swTab('pass',this)">🔑 Clave</button>
   </div>
   <div class="adbody">
@@ -476,6 +484,53 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 20p
       </div>
     </div>
 
+    <div class="adsec" id="tab-proyectos">
+      <div class="ads-title">Galería de Proyectos</div>
+      <div class="adc" style="margin-bottom:14px">
+        <div class="ads-title" style="font-size:16px;margin-bottom:12px">📷 Agregar Foto</div>
+        <input type="file" id="proj-photo-file" accept="image/*" style="display:none" onchange="handleProjPhotoUpload(this)">
+        <label for="proj-photo-file" style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:16px;background:rgba(245,158,11,.08);border:2px dashed var(--amber);border-radius:var(--r);color:var(--amber);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:15px;text-transform:uppercase;letter-spacing:1px;cursor:pointer;margin-bottom:8px">
+          📷 AGREGAR FOTO — Click para elegir
+        </label>
+        <div id="proj-photo-preview" style="margin-top:8px;display:none;align-items:center;gap:10px">
+          <img id="proj-photo-preview-img" style="width:70px;height:70px;object-fit:cover;border-radius:8px;border:2px solid var(--amber)">
+          <div>
+            <div id="proj-photo-name" style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--green)">✓ Foto lista</div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text3);margin-top:2px">Se subirá al guardar</div>
+          </div>
+        </div>
+        <button class="adb adb-save" onclick="addProjMedia('photo')" style="margin-top:8px">💾 Guardar Foto</button>
+      </div>
+      <div class="adc" style="margin-bottom:14px">
+        <div class="ads-title" style="font-size:16px;margin-bottom:12px">🎬 Agregar Video</div>
+        <div style="background:rgba(248,81,73,.06);border:1px solid rgba(248,81,73,.2);border-radius:var(--rsm);padding:10px 12px;margin-bottom:10px;display:flex;align-items:flex-start;gap:8px">
+          <span style="font-size:16px">⚠️</span>
+          <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text2);line-height:1.5">Videos deben ser cortos (máx 30s, menos de 50MB). Formatos: MP4, MOV, WEBM. Se suben a Firebase Storage y se guardan como URL.</span>
+        </div>
+        <input type="file" id="proj-video-file" accept="video/mp4,video/quicktime,video/webm" style="display:none" onchange="handleProjVideoUpload(this)">
+        <label for="proj-video-file" style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:16px;background:rgba(248,81,73,.08);border:2px dashed var(--red);border-radius:var(--r);color:var(--red);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:15px;text-transform:uppercase;letter-spacing:1px;cursor:pointer;margin-bottom:8px">
+          🎬 AGREGAR VIDEO — Click para elegir
+        </label>
+        <div id="proj-video-preview" style="margin-top:8px;display:none;align-items:center;gap:10px">
+          <div style="width:70px;height:70px;background:rgba(248,81,73,.15);border-radius:8px;border:2px solid var(--red);display:flex;align-items:center;justify-content:center;font-size:28px">🎬</div>
+          <div>
+            <div id="proj-video-name" style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--green)">✓ Video listo</div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text3);margin-top:2px">Se subirá al guardar</div>
+          </div>
+        </div>
+        <div id="proj-video-progress" style="display:none;margin-top:8px">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--amber);margin-bottom:4px">⬆ Subiendo video...</div>
+          <div class="upload-bar" id="proj-video-bar" style="width:0%"></div>
+          <div class="upload-pct" id="proj-video-pct" style="text-align:center;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text2);margin-top:4px">0%</div>
+        </div>
+        <button class="adb adb-save" onclick="addProjMedia('video')" style="margin-top:8px;background:rgba(248,81,73,.15);color:var(--red);border:1px solid rgba(248,81,73,.3)">🎬 Guardar Video</button>
+      </div>
+      <div class="adc">
+        <div class="ads-title" style="font-size:16px;margin-bottom:12px">📁 Archivos en Galería</div>
+        <div id="adm-proj-list" style="max-height:300px;overflow-y:auto"></div>
+      </div>
+    </div>
+
     <div class="adsec" id="tab-pass">
       <div class="ads-title">Cambiar Contraseña</div>
       <div class="adc">
@@ -523,23 +578,25 @@ function hideLoad() { document.getElementById('loading-bar').style.width = '100%
 async function loadFromFirebase() {
   showLoad();
   try {
-    const [eqSnap, negSnap, statsSnap, passSnap] = await Promise.all([
+    const [eqSnap, negSnap, statsSnap, passSnap, proySnap] = await Promise.all([
       getDocs(collection(db, 'equipos')),
       getDocs(collection(db, 'negocio')),
       getDocs(collection(db, 'stats')),
-      getDocs(collection(db, 'config'))
+      getDocs(collection(db, 'config')),
+      getDocs(collection(db, 'proyectos'))
     ]);
     appState.equipos = eqSnap.docs.map(d => ({ id: d.id, ...d.data() }));
     if (!negSnap.empty) appState.negocio = negSnap.docs[0].data();
     if (!statsSnap.empty) appState.stats = statsSnap.docs.map(d => d.data());
     if (!passSnap.empty) appState.pass = passSnap.docs.find(d => d.id === 'auth')?.data()?.pass || '123456';
+    appState.proyectos = proySnap.docs.map(d => ({ id: d.id, ...d.data() }));
     if (appState.equipos.length === 0) await seedData();
   } catch(e) {
     console.error('Firebase error:', e);
     appState.equipos = getDefaultEquipos();
   }
   appState.loading = false;
-  applyState(); renderGrid(); buildTicker();
+  applyState(); renderGrid(); buildTicker(); renderProj();
   hideLoad();
 }
 
@@ -869,6 +926,19 @@ function editEq(id) {
   document.getElementById('ef-hrs').value = eq.horas || '';
   document.getElementById('ef-tarifa').value = eq.tarifa || '';
   document.getElementById('ef-foto-url').value = eq.fotoUrl || '';
+  // Show existing photo in preview if available
+  const preview = document.getElementById('upload-preview');
+  const previewImg = document.getElementById('upload-preview-img');
+  const previewName = document.getElementById('upload-preview-name');
+  if (eq.fotoUrl && eq.fotoUrl.startsWith('http')) {
+    previewImg.src = eq.fotoUrl;
+    previewImg.style.display = 'block';
+    previewName.textContent = '✓ Foto actual (selecciona otra para cambiarla)';
+    preview.style.display = 'flex';
+  } else {
+    preview.style.display = 'none';
+  }
+  pendingUpload = null;
   document.getElementById('eq-flbl').textContent = '✏️ Editar Equipo';
   document.getElementById('adm-cancel').style.display = 'block';
   document.getElementById('eq-flbl').scrollIntoView({ behavior: 'smooth' });
@@ -936,6 +1006,139 @@ async function changePass() {
   appState.pass = nw;
   ['pa-act', 'pa-new', 'pa-conf'].forEach(id => document.getElementById(id).value = '');
   toast('✅ Contraseña cambiada');
+}
+
+// ========== PROYECTOS GALLERY ==========
+let projPendingPhoto = null;
+let projPendingVideo = null;
+
+function handleProjPhotoUpload(input) {
+  const file = input.files[0];
+  if (!file) return;
+  projPendingPhoto = file;
+  projPendingVideo = null;
+  const preview = document.getElementById('proj-photo-preview');
+  const previewImg = document.getElementById('proj-photo-preview-img');
+  const previewName = document.getElementById('proj-photo-name');
+  previewImg.src = URL.createObjectURL(file);
+  preview.style.display = 'flex';
+  previewName.textContent = file.name;
+  document.getElementById('proj-video-preview').style.display = 'none';
+  toast('📷 Foto lista para subir');
+}
+
+function handleProjVideoUpload(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 100 * 1024 * 1024) { toast('⚠ Video muy grande (máx 100MB)'); return; }
+  projPendingVideo = file;
+  projPendingPhoto = null;
+  const preview = document.getElementById('proj-video-preview');
+  const previewName = document.getElementById('proj-video-name');
+  preview.style.display = 'flex';
+  previewName.textContent = file.name.substring(0, 30) + (file.name.length > 30 ? '...' : '');
+  document.getElementById('proj-photo-preview').style.display = 'none';
+  toast('🎬 Video listo para subir');
+}
+
+async function addProjMedia(type) {
+  if (type === 'photo' && projPendingPhoto) {
+    toast('⬆ Subiendo foto...');
+    const id = `proj_${Date.now()}`;
+    const storageRef = ref(storage, `proyectos/${id}.jpg`);
+    const snap = await uploadBytesResumable(storageRef, projPendingPhoto);
+    const url = await getDownloadURL(snap.ref);
+    await setDoc(doc(db, 'proyectos', id), { type: 'photo', url, createdAt: new Date().toISOString() });
+    if (!appState.proyectos) appState.proyectos = [];
+    appState.proyectos.push({ id, type: 'photo', url });
+    projPendingPhoto = null;
+    document.getElementById('proj-photo-preview').style.display = 'none';
+    document.getElementById('proj-photo-file').value = '';
+    renderAdmProjList();
+    renderProj();
+    toast('✅ Foto agregada a la galería');
+  } else if (type === 'video' && projPendingVideo) {
+    toast('🎬 Subiendo video (puede tardar)...');
+    const id = `proj_${Date.now()}`;
+    const ext = projPendingVideo.name.split('.').pop();
+    const storageRef = ref(storage, `proyectos/${id}.${ext}`);
+    const uploadTask = uploadBytesResumable(storageRef, projPendingVideo);
+    uploadTask.on('state_changed', snap => {
+      const pct = Math.round(snap.bytesTransferred / snap.totalBytes * 100);
+      document.getElementById('proj-video-bar').style.width = pct + '%';
+      document.getElementById('proj-video-pct').textContent = pct + '%';
+    }, err => { toast('❌ Error subiendo video'); projPendingVideo = null; },
+    async () => {
+      const url = await getDownloadURL(uploadTask.snapshot.ref);
+      await setDoc(doc(db, 'proyectos', id), { type: 'video', url, createdAt: new Date().toISOString() });
+      if (!appState.proyectos) appState.proyectos = [];
+      appState.proyectos.push({ id, type: 'video', url });
+      projPendingVideo = null;
+      document.getElementById('proj-video-preview').style.display = 'none';
+      document.getElementById('proj-video-progress').style.display = 'none';
+      document.getElementById('proj-video-file').value = '';
+      renderAdmProjList();
+      toast('✅ Video agregado a la galería');
+    });
+  } else {
+    toast('⚠ Selecciona un archivo primero');
+  }
+}
+
+async function loadProyectos() {
+  try {
+    const snap = await getDocs(collection(db, 'proyectos'));
+    appState.proyectos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderAdmProjList();
+    renderProj();
+  } catch(e) { console.error(e); }
+}
+
+function renderAdmProjList() {
+  const list = document.getElementById('adm-proj-list');
+  if (!list) return;
+  if (!appState.proyectos || !appState.proyectos.length) {
+    list.innerHTML = '<p style="color:var(--text3);font-family:\'Share Tech Mono\',monospace;font-size:11px;text-align:center;padding:16px">Sin archivos. Agrega fotos o videos arriba.</p>';
+    return;
+  }
+  list.innerHTML = appState.proyectos.map(p => {
+    const icon = p.type === 'video' ? '🎬' : '📷';
+    const isVideo = p.type === 'video';
+    return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">
+      <span style="font-size:20px">${icon}</span>
+      <div style="flex:1;overflow:hidden">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${isVideo ? 'VIDEO' : 'FOTO'}</div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3)">${p.url.substring(0,40)}...</div>
+      </div>
+      <button onclick="delProjMedia('${p.id}')" style="background:none;border:none;color:var(--red);font-size:16px;cursor:pointer;padding:4px">✕</button>
+    </div>`;
+  }).join('');
+}
+
+async function delProjMedia(id) {
+  if (!confirm('¿Eliminar este archivo de la galería?')) return;
+  await deleteDoc(doc(db, 'proyectos', id));
+  appState.proyectos = appState.proyectos.filter(p => p.id !== id);
+  renderAdmProjList();
+  renderProj();
+  toast('🗑️ Eliminado');
+}
+
+function renderProj() {
+  const sec = document.getElementById('proyectos');
+  const grid = document.getElementById('proy-grid');
+  if (!sec || !grid) return;
+  if (!appState.proyectos || !appState.proyectos.length) { sec.style.display = 'none'; return; }
+  sec.style.display = 'block';
+  const photos = appState.proyectos.filter(p => p.type === 'photo');
+  if (!photos.length) { sec.style.display = 'none'; return; }
+  // First photo is big, rest grid
+  grid.innerHTML = photos.map(p => {
+    if (p === photos[0]) {
+      return `<div class="proy-item" style="grid-column:1/-1"><img src="${p.url}" loading="lazy" onerror="this.parentElement.style.display='none'" style="width:100%;height:100%;object-fit:cover"></div>`;
+    }
+    return `<div class="proy-item"><img src="${p.url}" loading="lazy" onerror="this.parentElement.style.display='none'" style="width:100%;height:100%;object-fit:cover"></div>`;
+  }).join('');
 }
 
 function renderAdmEqList() {
@@ -1006,6 +1209,10 @@ window.selOp = selOp;
 window.sendQt = sendQt;
 window.toggleCartFromModal = toggleCartFromModal;
 window.handlePhotoUpload = handlePhotoUpload;
+window.handleProjPhotoUpload = handleProjPhotoUpload;
+window.handleProjVideoUpload = handleProjVideoUpload;
+window.addProjMedia = addProjMedia;
+window.delProjMedia = delProjMedia;
 
 document.addEventListener('DOMContentLoaded', () => { loadFromFirebase(); setupObs(); });
 </script>
