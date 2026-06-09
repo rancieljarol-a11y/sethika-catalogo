@@ -526,7 +526,6 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/fireba
 import { getFirestore, collection, doc, getDocs, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const IMGBB_KEY = '093b7d2d800e2eedec3e3a4f14d0b2cb';
-
 const firebaseConfig = {
   apiKey: "AIzaSyB1jB2CxdaJdEhS9zkt5n_TQyL0aDXTf2Y",
   authDomain: "sethika-catalogo.firebaseapp.com",
@@ -536,7 +535,6 @@ const firebaseConfig = {
   appId: "1:178498262935:web:3e6965f8ea049a44d516d2",
   measurementId: "G-9XRB4K88ZB"
 };
-
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
@@ -561,37 +559,69 @@ async function uploadToImgbb(file) {
   });
 }
 
-// State
-let appState = { pass: '123456', equipos: [], stats: [], negocio: {}, proyectos: [], loading: true };
-let cart = [], curEqId = null, qtMode = 'general', opVal = 'Sí';
-let pendingUpload = null, projPendingPhoto = null, projPendingVideo = null;
-const PFX = {'Retro Pala':'RP','Retroexcavadora':'RX','Rodillos Compactadores':'RC','Compresor con Martillo':'CM','Minicargador':'MC','Greador':'GR','Movimiento de Tierra':'MT','Otro':'OT'};
+// ===== STATE (localStorage primary, Firebase secondary) =====
+const LS_KEY = 'sethika_data';
+
+function getDefaultData() {
+  return {
+    pass: '123456',
+    equipos: [
+      {id:'1',nombre:'Retro Pala',emoji:'🦾',categoria:'Retro Pala',disponibilidad:'disponible',desc:'Retro palas en excelente estado, ideales para trabajos de excavacion, carga y nivelacion.',capacidad:'20 ton',anio:'2023',operador:'Sí',horas:'10h/dia',tarifa:18000,fotoUrl:'https://i.ibb.co/8XvfKk1/retro-pala.jpg'},
+      {id:'2',nombre:'Retroexcavadora',emoji:'🚜',categoria:'Retroexcavadora',disponibilidad:'disponible',desc:'Potentes y confiables para excavaciones profundas, apertura de zanjas y movimientos de tierra a gran escala.',capacidad:'15 ton',anio:'2022',operador:'Sí',horas:'10h/dia',tarifa:15000,fotoUrl:'https://i.ibb.co/yXqfVJK/retro-excavadora.jpg'},
+      {id:'3',nombre:'Rodillos Compactadores',emoji:'⚙️',categoria:'Rodillos Compactadores',disponibilidad:'disponible',desc:'Para todo tipo de terreno. Compactacion uniforme y resistente.',capacidad:'8 ton',anio:'2023',operador:'Sí',horas:'8h/dia',tarifa:9000,fotoUrl:'https://i.ibb.co/KwXjfYZ/rodillos.jpg'},
+      {id:'4',nombre:'Compresor con Martillo',emoji:'🔨',categoria:'Compresor con Martillo',disponibilidad:'disponible',desc:'Ideales para romper aceras, pavimentos y estructuras de concreto.',capacidad:'6 bar',anio:'2022',operador:'Sí',horas:'8h/dia',tarifa:8000,fotoUrl:'https://i.ibb.co/KJTqvXZ/compresor.jpg'},
+      {id:'5',nombre:'Minicargador',emoji:'🧱',categoria:'Minicargador',disponibilidad:'disponible',desc:'Versatiles y eficientes, perfectos para cargar, empujar o nivelar materiales en espacios reducidos.',capacidad:'1.5 ton',anio:'2023',operador:'Sí',horas:'10h/dia',tarifa:10000,fotoUrl:'https://i.ibb.co/bNvkJf3/minicargador.jpg'},
+      {id:'6',nombre:'Greador',emoji:'🛣️',categoria:'Greador',disponibilidad:'disponible',desc:'Potentes, ideales para nivelar terrenos, perfilar caminos y preparar superficies.',capacidad:'130 HP',anio:'2022',operador:'Sí',horas:'10h/dia',tarifa:20000,fotoUrl:'https://i.ibb.co/WpgZ3Qh/greadar.jpg'},
+      {id:'7',nombre:'Movimiento de Tierra',emoji:'🏗️',categoria:'Movimiento de Tierra',disponibilidad:'disponible',desc:'Excavaciones, venta de agregados y suministro de material de relleno.',capacidad:'Varios',anio:'2024',operador:'Sí',horas:'Flexible',tarifa:12000,fotoUrl:'https://i.ibb.co/qJPNX8z/movimiento-tierra.jpg'}
+    ],
+    stats: [{num:120,label:'Proyectos'},{num:15,label:'Años Activos'},{num:7,label:'Equipos en Flota'}],
+    negocio: {nombre:'Sethika Constructora',tagline:'EQUIPOS PESADOS · RD',wa:'8296400203',ig:'Sethikaconstructora',fb:''},
+    proyectos: []
+  };
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  return getDefaultData();
+}
+
+function saveState(state) {
+  localStorage.setItem(LS_KEY, JSON.stringify(state));
+  localStorage.setItem('sethika_admin_pass', state.pass);
+}
+
+let state = loadState();
 
 // ===== HELPERS =====
-function $(id) { return document.getElementById(id); }
+const $ = id => document.getElementById(id);
 function toast(msg) { const t = $('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2600); }
-function showLoad() { $('loading-bar').classList.add('show'); $('loading-bar').style.width = '80%'; }
-function hideLoad() { $('loading-bar').style.width = '100%'; setTimeout(() => $('loading-bar').classList.remove('show'), 300); }
+function showLoad() { $('loading-bar').style.display = 'block'; $('loading-bar').style.width = '80%'; }
+function hideLoad() { $('loading-bar').style.width = '100%'; setTimeout(() => { $('loading-bar').style.display = 'none'; }, 300); }
 function openSheet(ov, sh) { $(ov).classList.add('open'); $(sh).classList.add('open'); document.body.style.overflow = 'hidden'; }
 function closeSheet(ov, sh) { $(ov).classList.remove('open'); $(sh).classList.remove('open'); document.body.style.overflow = ''; }
 
 // ===== BRAND TAP =====
 let brandTaps = 0, brandTimer = null;
 $('brand-tap').addEventListener('click', () => {
-  brandTaps++;
-  clearTimeout(brandTimer);
+  brandTaps++; clearTimeout(brandTimer);
   if (brandTaps >= 7) { brandTaps = 0; openAdmin(); toast('🔓 Admin directo'); return; }
   if (brandTaps >= 5) { brandTaps = 0; openLock(); toast('🔓 Panel admin abierto'); return; }
   brandTimer = setTimeout(() => brandTaps = 0, 1500);
 });
 
-// ===== ADMIN BUTTON =====
+// ===== ADMIN BUTTON (FOOTER) =====
 $('admin-btn').addEventListener('click', openLock);
 
 // ===== LOGIN =====
-$('lk-btn').addEventListener('click', () => {
+$('lk-btn').addEventListener('click', doLogin);
+$('lk-pass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+function doLogin() {
   const entered = $('lk-pass').value.trim();
-  const stored = appState.pass || localStorage.getItem('sethika_admin_pass') || '123456';
+  const stored = state.pass || localStorage.getItem('sethika_admin_pass') || '123456';
   if (entered === stored || entered === '123456') {
     closeLock();
     openAdmin();
@@ -600,10 +630,8 @@ $('lk-btn').addEventListener('click', () => {
     $('lk-err').textContent = '❌ Contraseña incorrecta — prueba 123456';
     $('lk-err').style.display = 'block';
   }
-});
-$('lk-pass').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('lk-btn').click(); });
+}
 
-// ===== ADMIN PANEL =====
 function openLock() { $('adm-lock').classList.add('show'); $('lk-pass').value = ''; $('lk-err').style.display = 'none'; }
 function closeLock() { $('adm-lock').classList.remove('show'); }
 function openAdmin() { loadAdmForms(); $('adm-panel').classList.add('show'); }
@@ -620,69 +648,16 @@ function closeAdmin() { $('adm-panel').classList.remove('show'); applyState(); r
 });
 $('adm-close').addEventListener('click', closeAdmin);
 
-// ===== DATA LOADING =====
-async function loadFromFirebase() {
-  showLoad();
-  try {
-    const [eqSnap, negSnap, statsSnap, passSnap, proySnap] = await Promise.all([
-      getDocs(collection(db, 'equipos')),
-      getDocs(collection(db, 'negocio')),
-      getDocs(collection(db, 'stats')),
-      getDocs(collection(db, 'config')),
-      getDocs(collection(db, 'proyectos'))
-    ]);
-    appState.equipos = eqSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-    if (!negSnap.empty) appState.negocio = negSnap.docs[0].data();
-    if (!statsSnap.empty) appState.stats = statsSnap.docs.map(d => d.data());
-    const authDoc = passSnap.docs.find(d => d.id === 'auth') || passSnap.docs[0];
-    appState.pass = authDoc?.data()?.pass || '123456';
-    if (appState.pass) localStorage.setItem('sethika_admin_pass', appState.pass);
-    appState.proyectos = proySnap.docs.map(d => ({ id: d.id, ...d.data() }));
-    if (appState.equipos.length === 0) await seedData();
-  } catch(e) {
-    console.error('Firebase error:', e);
-    appState.pass = localStorage.getItem('sethika_admin_pass') || '123456';
-    appState.equipos = getDefaultEquipos();
-  }
-  appState.loading = false;
-  applyState(); renderGrid(); buildTicker(); renderProj();
-  hideLoad();
-}
-
-function getDefaultEquipos() {
-  return [
-    {id:'1',nombre:'Retro Pala',emoji:'🦾',categoria:'Retro Pala',disponibilidad:'disponible',desc:'Retro palas en excelente estado.',capacidad:'20 ton',anio:'2023',operador:'Sí',horas:'10h/día',tarifa:18000,fotoUrl:''},
-    {id:'2',nombre:'Retroexcavadora',emoji:'🚜',categoria:'Retroexcavadora',disponibilidad:'disponible',desc:'Potentes para excavaciones profundas.',capacidad:'15 ton',anio:'2022',operador:'Sí',horas:'10h/día',tarifa:15000,fotoUrl:''},
-    {id:'3',nombre:'Rodillos Compactadores',emoji:'⚙️',categoria:'Rodillos Compactadores',disponibilidad:'disponible',desc:'Compactación uniforme y resistente.',capacidad:'8 ton',anio:'2023',operador:'Sí',horas:'8h/día',tarifa:9000,fotoUrl:''},
-    {id:'4',nombre:'Compresor con Martillo',emoji:'🔨',categoria:'Compresor con Martillo',disponibilidad:'disponible',desc:'Para romper aceras y pavimentos.',capacidad:'6 bar',anio:'2022',operador:'Sí',horas:'8h/día',tarifa:8000,fotoUrl:''},
-    {id:'5',nombre:'Minicargador',emoji:'🧱',categoria:'Minicargador',disponibilidad:'disponible',desc:'Versátiles para espacios reducidos.',capacidad:'1.5 ton',anio:'2023',operador:'Sí',horas:'10h/día',tarifa:10000,fotoUrl:''},
-    {id:'6',nombre:'Greador',emoji:'🛣️',categoria:'Greador',disponibilidad:'disponible',desc:'Para nivelar terrenos y perfilar caminos.',capacidad:'130 HP',anio:'2022',operador:'Sí',horas:'10h/día',tarifa:20000,fotoUrl:''},
-    {id:'7',nombre:'Movimiento de Tierra',emoji:'🏗️',categoria:'Movimiento de Tierra',disponibilidad:'disponible',desc:'Excavaciones y suministro de material.',capacidad:'Varios',anio:'2024',operador:'Sí',horas:'Flexible',tarifa:12000,fotoUrl:''}
-  ];
-}
-
-async function seedData() {
-  const defaults = getDefaultEquipos();
-  for (const eq of defaults) await setDoc(doc(db, 'equipos', eq.id), eq);
-  await setDoc(doc(db, 'negocio', 'info'), { nombre: 'Sethika Constructora', tagline: 'EQUIPOS PESADOS · RD', wa: '8296400203', ig: 'Sethikaconstructora', fb: '' });
-  await setDoc(doc(db, 'stats', '1'), { num: 120, label: 'Proyectos' });
-  await setDoc(doc(db, 'stats', '2'), { num: 15, label: 'Años Activos' });
-  await setDoc(doc(db, 'stats', '3'), { num: 7, label: 'Equipos en Flota' });
-  await setDoc(doc(db, 'config', 'auth'), { pass: '123456' });
-  appState.negocio = { nombre: 'Sethika Constructora', tagline: 'EQUIPOS PESADOS · RD', wa: '8296400203', ig: 'Sethikaconstructora', fb: '' };
-  appState.stats = [{ num: 120, label: 'Proyectos' }, { num: 15, label: 'Años Activos' }, { num: 7, label: 'Equipos en Flota' }];
-}
-
-// ===== APPLY STATE =====
+// ===== APPLY STATE (runs immediately, no Firebase needed) =====
 function applyState() {
-  const n = appState.negocio || {};
-  const disp = appState.equipos.filter(e => e.disponibilidad === 'disponible').length;
-  const resv = appState.equipos.filter(e => e.disponibilidad === 'reservado').length;
-  const mant = appState.equipos.filter(e => e.disponibilidad === 'mantenimiento').length;
+  const n = state.negocio || {};
+  const disp = state.equipos.filter(e => e.disponibilidad === 'disponible').length;
+  const resv = state.equipos.filter(e => e.disponibilidad === 'reservado').length;
+  const mant = state.equipos.filter(e => e.disponibilidad === 'mantenimiento').length;
   $('hero-fleet').innerHTML =
     `<div class="hf-item"><div class="hf-dot" style="background:#3fb950"></div><span style="color:#e6edf3">${disp}</span>&nbsp;<span style="color:#484f58">disponibles</span></div>` +
     (resv ? `<div class="hf-item"><div class="hf-dot" style="background:#f85149"></div><span style="color:#e6edf3">${resv}</span>&nbsp;<span style="color:#484f58">reservados</span></div>` : '') +
-    `<div class="hf-item"><div class="hf-dot" style="background:#484f58"></div><span style="color:#e6edf3">${appState.equipos.length}</span>&nbsp;<span style="color:#484f58">total</span></div>`;
+    `<div class="hf-item"><div class="hf-dot" style="background:#484f58"></div><span style="color:#e6edf3">${state.equipos.length}</span>&nbsp;<span style="color:#484f58">total</span></div>`;
   $('fleet-bar').innerHTML =
     `<div class="fb-item"><div class="fb-dot" style="background:#3fb950"></div><span class="fb-num">${disp}</span><span class="fb-lbl">&nbsp;Disponibles</span></div>` +
     `<div class="fb-item"><div class="fb-dot" style="background:#f85149"></div><span class="fb-num">${resv}</span><span class="fb-lbl">&nbsp;Reservados</span></div>` +
@@ -691,17 +666,16 @@ function applyState() {
   $('ft-sub').textContent = (n.tagline || 'EQUIPOS PESADOS · RD').toUpperCase();
   $('ft-copy').textContent = `© ${new Date().getFullYear()} ${(n.nombre || 'SETHIKA CONSTRUCTORA').toUpperCase()}`;
   const wh = n.wa ? `https://wa.me/${n.wa}` : '#';
-  $('ft-wa').href = wh;
-  $('wa-float').href = wh;
+  $('ft-wa').href = wh; $('wa-float').href = wh;
   if (n.ig) { $('ft-ig').href = `https://instagram.com/${n.ig.replace('@','')}`; $('ft-ig').textContent = `📸 ${n.ig}`; $('ft-ig').style.display = 'flex'; }
   if (n.fb) { $('ft-fb').href = n.fb.startsWith('http') ? n.fb : `https://facebook.com/${n.fb}`; $('ft-fb').textContent = `👥 ${n.fb}`; $('ft-fb').style.display = 'flex'; }
-  if (appState.stats[0]) $('nc-proy').textContent = appState.stats[0].num;
-  if (appState.stats[1]) $('nc-anios').textContent = appState.stats[1].num;
-  if (appState.stats[2]) $('nc-eq').textContent = appState.stats[2].num;
+  if (state.stats[0]) $('nc-proy').textContent = state.stats[0].num;
+  if (state.stats[1]) $('nc-anios').textContent = state.stats[1].num;
+  if (state.stats[2]) $('nc-eq').textContent = state.stats[2].num;
 }
 
 function buildTicker() {
-  const items = appState.stats.map(st => `<div class="t-item"><strong>+${st.num}</strong>${st.label}</div>`);
+  const items = state.stats.map(st => `<div class="t-item"><strong>+${st.num}</strong>${st.label}</div>`);
   items.push(`<div class="t-item">▸&nbsp;Cotiza gratis por WhatsApp</div>`);
   items.push(`<div class="t-item">▸&nbsp;Operadores certificados</div>`);
   items.push(`<div class="t-item">▸&nbsp;Cobertura nacional</div>`);
@@ -710,26 +684,27 @@ function buildTicker() {
 
 // ===== RENDER GRID =====
 let curCat = 'Todos';
+const PFX = {'Retro Pala':'RP','Retroexcavadora':'RX','Rodillos Compactadores':'RC','Compresor con Martillo':'CM','Minicargador':'MC','Greador':'GR','Movimiento de Tierra':'MT','Otro':'OT'};
+
 function renderGrid() {
   const grid = $('eq-grid'), fr = $('filter-row');
-  const cats = ['Todos', ...new Set(appState.equipos.map(e => e.categoria))];
+  const cats = ['Todos', ...new Set(state.equipos.map(e => e.categoria))];
   fr.innerHTML = '';
   cats.forEach(cat => {
     const b = document.createElement('button');
     b.className = 'fbtn' + (cat === curCat ? ' active' : '');
-    b.dataset.cat = cat;
-    b.textContent = cat;
-    b.addEventListener('click', () => filterCat(b));
+    b.dataset.cat = cat; b.textContent = cat;
+    b.addEventListener('click', () => { curCat = cat; document.querySelectorAll('.fbtn').forEach(x => x.classList.remove('active')); b.classList.add('active'); renderGrid(); });
     fr.appendChild(b);
   });
-  const list = curCat === 'Todos' ? appState.equipos : appState.equipos.filter(e => e.categoria === curCat);
+  const list = curCat === 'Todos' ? state.equipos : state.equipos.filter(e => e.categoria === curCat);
   grid.innerHTML = '';
-  if (!list.length) { grid.innerHTML = '<div class="empty-st"><div style="font-size:40px;opacity:.2">🏗️</div><p>SIN EQUIPOS EN ESTA CATEGORÍA</p></div>'; return; }
+  if (!list.length) { grid.innerHTML = '<div class="empty-st"><div style="font-size:40px;opacity:.2">🏗️</div><p>SIN EQUIPOS</p></div>'; return; }
   list.forEach((eq, i) => {
     const bc = eq.disponibilidad === 'disponible' ? 'av-disp' : eq.disponibilidad === 'reservado' ? 'av-resv' : 'av-mant';
     const bt = eq.disponibilidad === 'disponible' ? 'DISPONIBLE' : eq.disponibilidad === 'reservado' ? 'RESERVADO' : 'MANTENIMIENTO';
     const pfx = PFX[eq.categoria] || 'OT';
-    const seq = appState.equipos.findIndex(e => e.id === eq.id) + 1;
+    const seq = state.equipos.findIndex(e => e.id === eq.id) + 1;
     const eid = `${pfx}-${String(seq).padStart(3,'0')}`;
     const inCart = cart.includes(eq.id);
     const specs = [];
@@ -743,50 +718,40 @@ function renderGrid() {
     card.style.transitionDelay = `${i * .06}s`;
     card.id = `card-${eq.id}`;
     const hasImg = eq.fotoUrl && eq.fotoUrl.startsWith('http');
-    card.innerHTML = `
-      <div class="card-img">
-        ${hasImg ? `<img src="${eq.fotoUrl}" alt="${eq.nombre}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">` : ''}
-        <div class="iph" ${hasImg ? 'style="display:none"' : ''}>${eq.emoji || '🏗️'}<span>${eq.categoria}</span></div>
-        <div class="avail-badge ${bc}"><div class="av-dot"></div>${bt}</div>
-        <button class="cart-btn${inCart ? ' on' : ''}" id="cb-${eq.id}">${inCart ? '✓' : '+'}</button>
-        <div class="card-slash"></div>
+    card.innerHTML = `<div class="card-img">
+      ${hasImg ? `<img src="${eq.fotoUrl}" alt="${eq.nombre}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">` : ''}
+      <div class="iph" ${hasImg ? 'style="display:none"' : ''}>${eq.emoji || '🏗️'}<span>${eq.categoria}</span></div>
+      <div class="avail-badge ${bc}"><div class="av-dot"></div>${bt}</div>
+      <button class="cart-btn${inCart ? ' on' : ''}" id="cb-${eq.id}">${inCart ? '✓' : '+'}</button>
+      <div class="card-slash"></div>
+    </div>
+    <div class="cb"></div>
+    <div class="card-body">
+      <div class="card-meta"><div class="card-eid">${eid}</div><div class="card-cat">${eq.categoria}</div></div>
+      <div class="card-name">${eq.nombre}</div>
+      <div class="card-desc">${eq.desc || ''}</div>
+      <div class="card-specs">${specsHtml}</div>
+      <div class="card-acts">
+        <button class="ca-ficha">Ver Ficha</button>
+        <button class="ca-cot">Cotizar</button>
       </div>
-      <div class="cb"></div>
-      <div class="card-body">
-        <div class="card-meta"><div class="card-eid">${eid}</div><div class="card-cat">${eq.categoria}</div></div>
-        <div class="card-name">${eq.nombre}</div>
-        <div class="card-desc">${eq.desc || ''}</div>
-        <div class="card-specs">${specsHtml}</div>
-        <div class="card-acts">
-          <button class="ca-ficha">Ver Ficha</button>
-          <button class="ca-cot">Cotizar</button>
-        </div>
-      </div>`;
-    card.querySelector('.ca-ficha').addEventListener('click', (e) => { e.stopPropagation(); openEq(eq.id); });
-    card.querySelector('.ca-cot').addEventListener('click', (e) => { e.stopPropagation(); openQtSingle(eq.id); });
-    card.querySelector(`#cb-${eq.id}`).addEventListener('click', (e) => { e.stopPropagation(); toggleCart(eq.id); });
+    </div>`;
+    card.querySelector('.ca-ficha').addEventListener('click', e => { e.stopPropagation(); openEq(eq.id); });
+    card.querySelector('.ca-cot').addEventListener('click', e => { e.stopPropagation(); qtMode = 'single'; curEqId = eq.id; $('qt-sub').innerHTML = `Equipo: <b>${eq.nombre}</b>`; $('qt-chips').style.display = 'none'; openSheet('qt-ov', 'qt-sheet'); });
+    card.querySelector(`#cb-${eq.id}`).addEventListener('click', e => { e.stopPropagation(); toggleCart(eq.id); });
     card.addEventListener('click', () => openEq(eq.id));
     grid.appendChild(card);
   });
   setTimeout(() => document.querySelectorAll('.fu:not(.vis)').forEach(el => obs.observe(el)), 50);
 }
 
-function filterCat(btn) {
-  curCat = btn.dataset.cat;
-  document.querySelectorAll('.fbtn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  renderGrid();
-}
-
 // ===== CART =====
-function toggleCart(id) {
-  const i = cart.indexOf(id); i >= 0 ? cart.splice(i, 1) : cart.push(id);
-  updateCartUI();
-}
+let cart = [], curEqId = null, qtMode = 'general', opVal = 'Sí';
+function toggleCart(id) { const i = cart.indexOf(id); i >= 0 ? cart.splice(i, 1) : cart.push(id); updateCartUI(); }
 function updateCartUI() {
   $('cb-badge').textContent = cart.length;
   $('cart-float').classList.toggle('show', cart.length > 0);
-  appState.equipos.forEach(eq => {
+  state.equipos.forEach(eq => {
     const btn = $(`cb-${eq.id}`), card = $(`card-${eq.id}`);
     const on = cart.includes(eq.id);
     if (btn) { btn.textContent = on ? '✓' : '+'; btn.classList.toggle('on', on); }
@@ -795,7 +760,7 @@ function updateCartUI() {
 }
 $('cart-float').addEventListener('click', () => {
   qtMode = 'multi';
-  const sel = appState.equipos.filter(e => cart.includes(e.id));
+  const sel = state.equipos.filter(e => cart.includes(e.id));
   $('qt-chips').innerHTML = sel.map(e => `<div class="qt-chip">🏗 ${e.nombre}</div>`).join('');
   $('qt-chips').style.display = 'flex';
   $('qt-sub').innerHTML = `Cotizando <b>${sel.length} equipo(s)</b>`;
@@ -804,10 +769,10 @@ $('cart-float').addEventListener('click', () => {
 
 // ===== EQUIPMENT MODAL =====
 function openEq(id) {
-  const eq = appState.equipos.find(e => e.id === id); if (!eq) return;
+  const eq = state.equipos.find(e => e.id === id); if (!eq) return;
   curEqId = id;
   const pfx = PFX[eq.categoria] || 'OT';
-  const seq = appState.equipos.findIndex(e => e.id === id) + 1;
+  const seq = state.equipos.findIndex(e => e.id === id) + 1;
   const eid = `${pfx}-${String(seq).padStart(3,'0')}`;
   const bc = eq.disponibilidad === 'disponible' ? 'av-disp' : eq.disponibilidad === 'reservado' ? 'av-resv' : 'av-mant';
   const bt = eq.disponibilidad === 'disponible' ? 'DISPONIBLE' : eq.disponibilidad === 'reservado' ? 'RESERVADO' : 'MANTENIMIENTO';
@@ -831,37 +796,32 @@ function openEq(id) {
     const days = [1, 3, 7, 14, 30], labels = ['1 día', '3 días', '1 semana', '2 semanas', '1 mes'];
     $('est-days').innerHTML = days.map((d, i) => `<button class="est-dbtn" data-d="${d}" data-t="${eq.tarifa}">${labels[i]}</button>`).join('');
     $('est-result').style.display = 'none';
-    $('est-days').querySelectorAll('.est-dbtn').forEach(btn => btn.addEventListener('click', () => {
-      $('est-days').querySelectorAll('.est-dbtn').forEach(b => b.classList.remove('on'));
-      btn.classList.add('on');
-      const d = parseInt(btn.dataset.d), t = parseInt(btn.dataset.t);
-      $('est-val').textContent = `RD$${(t*d*.9).toLocaleString('es-DO')} – RD$${(t*d*1.1).toLocaleString('es-DO')}`;
-      $('est-result').style.display = 'block';
-    }));
+    $('est-days').querySelectorAll('.est-dbtn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        $('est-days').querySelectorAll('.est-dbtn').forEach(b => b.classList.remove('on'));
+        btn.classList.add('on');
+        const d = parseInt(btn.dataset.d), t = parseInt(btn.dataset.t);
+        $('est-val').textContent = `RD$${(t*d*.9).toLocaleString('es-DO')} – RD$${(t*d*1.1).toLocaleString('es-DO')}`;
+        $('est-result').style.display = 'block';
+      });
+    });
   } else { ew.style.display = 'none'; }
   const on = cart.includes(id);
   const cb = $('m-btn-cart'); cb.textContent = on ? '✓ En paquete' : '+ Paquete'; cb.classList.toggle('on', on);
   openSheet('eq-ov', 'eq-sheet');
 }
 $('share-btn').addEventListener('click', () => {
-  const eq = appState.equipos.find(e => e.id === curEqId);
+  const eq = state.equipos.find(e => e.id === curEqId);
   if (!eq) return;
   const txt = `🏗️ *${eq.nombre}*\nCategoría: ${eq.categoria}\nEstado: ${eq.disponibilidad}\nCapacidad: ${eq.capacidad||'–'} · Año: ${eq.anio||'–'}\n\nCatálogo: ${location.href}`;
   if (navigator.share) navigator.share({ title: eq.nombre, text: txt }).catch(() => {});
   else navigator.clipboard.writeText(txt).then(() => toast('📋 Info copiada'));
 });
 $('eq-ov').addEventListener('click', () => closeSheet('eq-ov', 'eq-sheet'));
-$('m-btn-cot').addEventListener('click', () => { closeSheet('eq-ov', 'eq-sheet'); setTimeout(() => openQtSingle(curEqId), 220); });
+$('m-btn-cot').addEventListener('click', () => { closeSheet('eq-ov', 'eq-sheet'); setTimeout(() => { qtMode = 'single'; $('qt-sub').innerHTML = `Equipo: <b>${state.equipos.find(e => e.id === curEqId)?.nombre || ''}</b>`; $('qt-chips').style.display = 'none'; openSheet('qt-ov', 'qt-sheet'); }, 220); });
 $('m-btn-cart').addEventListener('click', () => { toggleCart(curEqId); const on = cart.includes(curEqId); $('m-btn-cart').textContent = on ? '✓ En paquete' : '+ Paquete'; $('m-btn-cart').classList.toggle('on', on); });
 
 // ===== QUOTE MODAL =====
-function openQtSingle(id) {
-  qtMode = 'single'; curEqId = id;
-  const eq = appState.equipos.find(e => e.id === id);
-  $('qt-sub').innerHTML = eq ? `Equipo: <b>${eq.nombre}</b>` : 'Cuéntanos sobre tu proyecto.';
-  $('qt-chips').style.display = 'none';
-  openSheet('qt-ov', 'qt-sheet');
-}
 $('qt-ov').addEventListener('click', () => closeSheet('qt-ov', 'qt-sheet'));
 $('op-si').addEventListener('click', () => { opVal = 'Sí'; $('op-si').classList.add('on'); $('op-no').classList.remove('on'); });
 $('op-no').addEventListener('click', () => { opVal = 'No'; $('op-no').classList.add('on'); $('op-si').classList.remove('on'); });
@@ -869,8 +829,8 @@ $('submit-wa').addEventListener('click', () => {
   const nombre = $('q-nombre').value.trim(), tel = $('q-tel').value.trim();
   if (!nombre || !tel) { toast('⚠ Nombre y teléfono son requeridos'); return; }
   let eqStr = '';
-  if (qtMode === 'multi' && cart.length) eqStr = appState.equipos.filter(e => cart.includes(e.id)).map(e => `• ${e.nombre}`).join('\n');
-  else if (qtMode === 'single' && curEqId) { const eq = appState.equipos.find(e => e.id === curEqId); eqStr = eq ? eq.nombre : '–'; }
+  if (qtMode === 'multi' && cart.length) eqStr = state.equipos.filter(e => cart.includes(e.id)).map(e => `• ${e.nombre}`).join('\n');
+  else if (qtMode === 'single' && curEqId) { const eq = state.equipos.find(e => e.id === curEqId); eqStr = eq ? eq.nombre : '–'; }
   else eqStr = 'Consulta general';
   let msg = `🏗️ *Solicitud de Cotización*\n\n`;
   msg += qtMode === 'multi' ? `📋 *Equipos solicitados:*\n${eqStr}\n` : `📋 *Equipo:* ${eqStr}\n`;
@@ -879,7 +839,7 @@ $('submit-wa').addEventListener('click', () => {
   if ($('q-dur').value) msg += `\n⏱ *Duración:* ${$('q-dur').value}`;
   if ($('q-zona').value) msg += `\n📍 *Zona:* ${$('q-zona').value}`;
   msg += `\n👷 *Operador:* ${opVal}\n\n_Enviado desde el catálogo digital Sethika Constructora._`;
-  window.open(`https://wa.me/${appState.negocio?.wa || '8296400203'}?text=${encodeURIComponent(msg)}`, '_blank');
+  window.open(`https://wa.me/${state.negocio?.wa || '8296400203'}?text=${encodeURIComponent(msg)}`, '_blank');
   closeSheet('qt-ov', 'qt-sheet');
   if (qtMode === 'multi') { cart = []; updateCartUI(); }
   ['q-nombre','q-tel','q-zona'].forEach(id => $(id).value = '');
@@ -888,17 +848,10 @@ $('submit-wa').addEventListener('click', () => {
 
 // ===== ADMIN FUNCTIONS =====
 function loadAdmForms() {
-  appState.stats.forEach((st, i) => {
-    const n = $(`s${i+1}n`), l = $(`s${i+1}l`);
-    if (n) n.value = st.num || '';
-    if (l) l.value = st.label || '';
-  });
-  const n = appState.negocio || {};
-  $('nf-nombre').value = n.nombre || '';
-  $('nf-tag').value = n.tagline || '';
-  $('nf-wa').value = n.wa || '';
-  $('nf-ig').value = n.ig || '';
-  $('nf-fb').value = n.fb || '';
+  state.stats.forEach((st, i) => { const n = $(`s${i+1}n`), l = $(`s${i+1}l`); if (n) n.value = st.num || ''; if (l) l.value = st.label || ''; });
+  const n = state.negocio || {};
+  $('nf-nombre').value = n.nombre || ''; $('nf-tag').value = n.tagline || '';
+  $('nf-wa').value = n.wa || ''; $('nf-ig').value = n.ig || ''; $('nf-fb').value = n.fb || '';
   renderAdmEqList();
   renderAdmProjList();
 }
@@ -906,8 +859,8 @@ function loadAdmForms() {
 function renderAdmEqList() {
   const list = $('adm-eq-list');
   list.innerHTML = '';
-  if (!appState.equipos.length) { list.innerHTML = '<p style="color:var(--text2);font-size:13px;margin-bottom:12px">Sin equipos.</p>'; return; }
-  appState.equipos.forEach(eq => {
+  if (!state.equipos.length) { list.innerHTML = '<p style="color:var(--text2);font-size:13px;margin-bottom:12px">Sin equipos.</p>'; return; }
+  state.equipos.forEach(eq => {
     const col = eq.disponibilidad === 'disponible' ? 'var(--green)' : eq.disponibilidad === 'reservado' ? 'var(--red)' : 'var(--orange)';
     const d = document.createElement('div');
     d.className = 'adc';
@@ -920,8 +873,9 @@ function renderAdmEqList() {
   });
 }
 
-// Photo upload handler
-$('ef-photo-file').addEventListener('change', (e) => {
+let pendingUpload = null;
+
+$('ef-photo-file').addEventListener('change', e => {
   const file = e.target.files[0]; if (!file) return;
   pendingUpload = file;
   $('upload-preview-img').src = URL.createObjectURL(file);
@@ -932,7 +886,6 @@ $('ef-photo-file').addEventListener('change', (e) => {
   toast('📷 Foto lista — se sube al guardar');
 });
 
-// Save equipment
 $('save-eq-btn').addEventListener('click', async () => {
   const nombre = $('ef-n').value.trim();
   if (!nombre) { toast('⚠ El nombre es requerido'); return; }
@@ -944,11 +897,8 @@ $('save-eq-btn').addEventListener('click', async () => {
     $('upload-progress').style.display = 'block';
     $('upload-bar').style.width = '30%';
     $('upload-pct').textContent = '30%';
-    try {
-      fotoUrl = await uploadToImgbb(pendingUpload);
-      $('upload-bar').style.width = '100%';
-      $('upload-pct').textContent = '100%';
-    } catch(e) { toast('❌ Error al subir foto'); fotoUrl = ''; }
+    try { fotoUrl = await uploadToImgbb(pendingUpload); $('upload-bar').style.width = '100%'; $('upload-pct').textContent = '100%'; }
+    catch(e) { toast('❌ Error al subir foto'); fotoUrl = ''; }
     pendingUpload = null;
   }
   const eq = {
@@ -964,9 +914,9 @@ $('save-eq-btn').addEventListener('click', async () => {
     tarifa: parseInt($('ef-tarifa').value) || null,
     fotoUrl: fotoUrl || ''
   };
-  await setDoc(doc(db, 'equipos', id), eq);
-  appState.equipos = appState.equipos.filter(e => e.id !== id);
-  appState.equipos.push(eq);
+  state.equipos = state.equipos.filter(e => e.id !== id);
+  state.equipos.push(eq);
+  saveState(state);
   cancelEdit();
   renderAdmEqList();
   renderGrid();
@@ -975,7 +925,7 @@ $('save-eq-btn').addEventListener('click', async () => {
 });
 
 function editEq(id) {
-  const eq = appState.equipos.find(e => e.id === id); if (!eq) return;
+  const eq = state.equipos.find(e => e.id === id); if (!eq) return;
   $('eid').value = eq.id;
   $('ef-n').value = eq.nombre; $('ef-e').value = eq.emoji || '';
   $('ef-c').value = eq.categoria; $('ef-d').value = eq.disponibilidad;
@@ -1008,54 +958,47 @@ function cancelEdit() {
   $('eq-flbl').textContent = '+ Nuevo Equipo';
   $('cancel-edit-btn').style.display = 'none';
 }
-
 $('cancel-edit-btn').addEventListener('click', cancelEdit);
 
-async function delEq(id) {
+function delEq(id) {
   if (!confirm('¿Eliminar?')) return;
-  await deleteDoc(doc(db, 'equipos', id));
-  appState.equipos = appState.equipos.filter(e => e.id !== id);
+  state.equipos = state.equipos.filter(e => e.id !== id);
+  saveState(state);
   renderAdmEqList();
   renderGrid();
   applyState();
   toast('🗑️ Eliminado');
 }
 
-$('save-stats-btn').addEventListener('click', async () => {
-  for (let i = 1; i <= 3; i++) {
-    await setDoc(doc(db, 'stats', String(i)), { num: parseInt($(`s${i}n`).value) || 0, label: $(`s${i}l`).value });
-    appState.stats[i-1] = { num: parseInt($(`s${i}n`).value) || 0, label: $(`s${i}l`).value };
-  }
+$('save-stats-btn').addEventListener('click', () => {
+  for (let i = 1; i <= 3; i++) state.stats[i-1] = { num: parseInt($(`s${i}n`).value) || 0, label: $(`s${i}l`).value };
+  saveState(state);
   buildTicker(); applyState();
   toast('✅ Guardado');
 });
 
-$('save-neg-btn').addEventListener('click', async () => {
-  const neg = { nombre: $('nf-nombre').value, tagline: $('nf-tag').value, wa: $('nf-wa').value.replace(/\D/g, ''), ig: $('nf-ig').value, fb: $('nf-fb').value };
-  await setDoc(doc(db, 'negocio', 'info'), neg);
-  appState.negocio = neg;
+$('save-neg-btn').addEventListener('click', () => {
+  state.negocio = { nombre: $('nf-nombre').value, tagline: $('nf-tag').value, wa: $('nf-wa').value.replace(/\D/g, ''), ig: $('nf-ig').value, fb: $('nf-fb').value };
+  saveState(state);
   applyState();
   toast('✅ Guardado');
 });
 
-$('change-pass-btn').addEventListener('click', async () => {
+$('change-pass-btn').addEventListener('click', () => {
   const act = $('pa-act').value, nw = $('pa-new').value, cf = $('pa-conf').value;
-  if (act !== appState.pass && act !== '123456') { toast('⚠ Contraseña actual incorrecta'); return; }
+  if (act !== state.pass && act !== '123456') { toast('⚠ Contraseña actual incorrecta'); return; }
   if (nw !== cf) { toast('⚠ No coinciden'); return; }
   if (nw.length < 4) { toast('⚠ Mínimo 4 caracteres'); return; }
-  localStorage.setItem('sethika_admin_pass', nw);
-  appState.pass = nw;
-  try {
-    const passSnap = await getDocs(collection(db, 'config'));
-    const authDoc = passSnap.docs.find(d => d.id === 'auth') || passSnap.docs[0];
-    if (authDoc) await setDoc(doc(db, 'config', authDoc.id), { pass: nw }, { merge: true });
-  } catch(e) { /* Firebase optional */ }
+  state.pass = nw;
+  saveState(state);
   ['pa-act','pa-new','pa-conf'].forEach(id => $(id).value = '');
   toast('✅ Contraseña cambiada');
 });
 
 // ===== PROJECTS =====
-$('proj-photo-file').addEventListener('change', (e) => {
+let projPendingPhoto = null, projPendingVideo = null;
+
+$('proj-photo-file').addEventListener('change', e => {
   const file = e.target.files[0]; if (!file) return;
   projPendingPhoto = file; projPendingVideo = null;
   $('proj-photo-preview-img').src = URL.createObjectURL(file);
@@ -1065,7 +1008,7 @@ $('proj-photo-file').addEventListener('change', (e) => {
   toast('📷 Foto lista para subir');
 });
 
-$('proj-video-file').addEventListener('change', (e) => {
+$('proj-video-file').addEventListener('change', e => {
   const file = e.target.files[0]; if (!file) return;
   if (file.size > 32 * 1024 * 1024) { toast('⚠ Video muy grande (máx 32MB)'); return; }
   projPendingVideo = file; projPendingPhoto = null;
@@ -1081,14 +1024,12 @@ $('save-proj-photo-btn').addEventListener('click', async () => {
   try {
     const id = `proj_${Date.now()}`;
     const url = await uploadToImgbb(projPendingPhoto);
-    await setDoc(doc(db, 'proyectos', id), { type: 'photo', url, createdAt: new Date().toISOString() });
-    if (!appState.proyectos) appState.proyectos = [];
-    appState.proyectos.push({ id, type: 'photo', url });
+    state.proyectos.push({ id, type: 'photo', url });
+    saveState(state);
     projPendingPhoto = null;
     $('proj-photo-preview').style.display = 'none';
     $('proj-photo-file').value = '';
     renderAdmProjList();
-    renderProj();
     toast('✅ Foto agregada a la galería');
   } catch(e) { toast('❌ Error al subir foto'); }
 });
@@ -1100,9 +1041,8 @@ $('save-proj-video-btn').addEventListener('click', async () => {
   try {
     const id = `proj_${Date.now()}`;
     const url = await uploadToImgbb(projPendingVideo);
-    await setDoc(doc(db, 'proyectos', id), { type: 'video', url, createdAt: new Date().toISOString() });
-    if (!appState.proyectos) appState.proyectos = [];
-    appState.proyectos.push({ id, type: 'video', url });
+    state.proyectos.push({ id, type: 'video', url });
+    saveState(state);
     projPendingVideo = null;
     $('proj-video-preview').style.display = 'none';
     $('proj-video-progress').style.display = 'none';
@@ -1113,13 +1053,12 @@ $('save-proj-video-btn').addEventListener('click', async () => {
 });
 
 function renderAdmProjList() {
-  const list = $('adm-proj-list');
-  if (!list) return;
-  if (!appState.proyectos || !appState.proyectos.length) {
+  const list = $('adm-proj-list'); if (!list) return;
+  if (!state.proyectos || !state.proyectos.length) {
     list.innerHTML = '<p style="color:var(--text3);font-family:\'Share Tech Mono\',monospace;font-size:11px;text-align:center;padding:16px">Sin archivos. Agrega fotos o videos arriba.</p>';
     return;
   }
-  list.innerHTML = appState.proyectos.map(p => {
+  list.innerHTML = state.proyectos.map((p, i) => {
     const icon = p.type === 'video' ? '🎬' : '📷';
     return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">
       <span style="font-size:20px">${icon}</span>
@@ -1127,35 +1066,18 @@ function renderAdmProjList() {
         <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.type === 'video' ? 'VIDEO' : 'FOTO'}</div>
         <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3)">${p.url.substring(0,40)}...</div>
       </div>
-      <button style="background:none;border:none;color:var(--red);font-size:16px;cursor:pointer;padding:4px">✕</button>
+      <button style="background:none;border:none;color:var(--red);font-size:16px;cursor:pointer;padding:4px" data-idx="${i}">✕</button>
     </div>`;
   }).join('');
-  list.querySelectorAll('button').forEach((btn, i) => {
-    btn.addEventListener('click', () => delProjMedia(appState.proyectos[i].id));
+  list.querySelectorAll('button[data-idx]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const i = parseInt(btn.dataset.idx);
+      state.proyectos.splice(i, 1);
+      saveState(state);
+      renderAdmProjList();
+      toast('🗑️ Eliminado');
+    });
   });
-}
-
-async function delProjMedia(id) {
-  if (!confirm('¿Eliminar este archivo de la galería?')) return;
-  await deleteDoc(doc(db, 'proyectos', id));
-  appState.proyectos = appState.proyectos.filter(p => p.id !== id);
-  renderAdmProjList();
-  renderProj();
-  toast('🗑️ Eliminado');
-}
-
-function renderProj() {
-  const sec = $('proyectos');
-  const grid = $('proy-grid') || document.getElementById('proy-grid');
-  if (!sec || !grid) return;
-  if (!appState.proyectos || !appState.proyectos.length) { sec.style.display = 'none'; return; }
-  const photos = appState.proyectos.filter(p => p.type === 'photo');
-  if (!photos.length) { sec.style.display = 'none'; return; }
-  sec.style.display = 'block';
-  grid.innerHTML = photos.map((p, i) => {
-    if (i === 0) return `<div class="proy-item" style="grid-column:1/-1"><img src="${p.url}" loading="lazy" onerror="this.parentElement.style.display='none'" style="width:100%;height:100%;object-fit:cover"></div>`;
-    return `<div class="proy-item"><img src="${p.url}" loading="lazy" onerror="this.parentElement.style.display='none'" style="width:100%;height:100%;object-fit:cover"></div>`;
-  }).join('');
 }
 
 // ===== INIT =====
@@ -1164,7 +1086,29 @@ function setupObs() {
   obs = new IntersectionObserver(entries => { entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('vis'); obs.unobserve(e.target); } }); }, { threshold: .08 });
 }
 
-document.addEventListener('DOMContentLoaded', () => { loadFromFirebase(); setupObs(); });
+// Run admin immediately (no Firebase dependency)
+applyState();
+renderGrid();
+buildTicker();
+setupObs();
+hideLoad();
+
+// Then try Firebase in background (for public data sync)
+getDocs(collection(db, 'equipos')).then(eqSnap => {
+  if (!eqSnap.empty && eqSnap.docs.length > state.equipos.length) {
+    state.equipos = eqSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+    saveState(state);
+    applyState(); renderGrid();
+  }
+}).catch(() => {});
+
+getDocs(collection(db, 'negocio')).then(negSnap => {
+  if (!negSnap.empty) { state.negocio = negSnap.docs[0].data(); saveState(state); applyState(); }
+}).catch(() => {});
+
+getDocs(collection(db, 'stats')).then(statsSnap => {
+  if (!statsSnap.empty) { state.stats = statsSnap.docs.map(d => d.data()); saveState(state); buildTicker(); applyState(); }
+}).catch(() => {});
 </script>
 </body>
 </html>
