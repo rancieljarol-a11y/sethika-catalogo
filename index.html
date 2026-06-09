@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<meta name="theme-color" content="#0d1117">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Sethika Constructora</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#21262d;--border:#30363d;--amber:#f59e0b;--amber2:#fbbf24;--text:#e6edf3;--text2:#8b949e;--text3:#484f58;--green:#3fb950;--red:#f85149;--orange:#d29922;--r:10px;--rsm:6px}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;font-family:inherit}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(245,158,11,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(245,158,11,.04) 1px,transparent 1px);background-size:48px 48px}
+#hero{position:relative;height:100svh;min-height:520px;display:flex;flex-direction:column;justify-content:flex-end;padding:0 20px 44px;overflow:hidden}
+#hero-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.42;z-index:1}
+.hero-grid{position:absolute;inset:0;z-index:2;pointer-events:none;background-image:linear-gradient(rgba(245,158,11,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(245,158,11,.07) 1px,transparent 1px);background-size:60px 60px}
+.hero-vig{position:absolute;inset:0;z-index:3;pointer-events:none;background:linear-gradient(to bottom,rgba(13,17,23,.65) 0%,transparent 30%,rgba(13,17,23,.98) 75%)}
+.scanline{position:absolute;left:0;right:0;height:2px;z-index:4;pointer-events:none;background:linear-gradient(to right,transparent,rgba(245,158,11,.9) 30%,rgba(255,255,255,.7) 50%,rgba(245,158,11,.9) 70%,transparent);animation:scan 2.6s cubic-bezier(.4,0,.6,1) .4s forwards;top:0}
+@keyframes scan{from{top:0;opacity:1}to{top:100%;opacity:0}}
+.hero-topbar{position:absolute;top:20px;left:20px;right:20px;display:flex;align-items:center;justify-content:space-between;z-index:5}
+.hero-brand{font-family:'Share Tech Mono',monospace;font-size:13px;color:var(--text2);letter-spacing:1px}
+.hero-brand b{color:var(--amber)}
+.status-pill{display:flex;align-items:center;gap:6px;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--green);border:1px solid rgba(63,185,80,.3);padding:5px 10px;border-radius:4px;background:rgba(63,185,80,.08);letter-spacing:1px}
+.s-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 1.8s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.15}}
+.hero-content{position:relative;z-index:5}
+.hero-eyebrow{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text2);letter-spacing:3px;text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.hero-eyebrow::before{content:'';display:block;height:1px;width:20px;background:var(--amber)}
+.hero-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:clamp(60px,18vw,92px);line-height:.84;letter-spacing:-1px;color:var(--text);margin-bottom:14px}
+.hero-title em{font-style:normal;color:var(--amber)}
+.hero-desc{font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:20px;max-width:300px}
+.hero-fleet{display:flex;gap:16px;margin-bottom:26px;flex-wrap:wrap}
+.hf-item{display:flex;align-items:center;gap:6px;font-family:'Share Tech Mono',monospace;font-size:11px}
+.hf-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.hero-actions{display:flex;gap:10px}
+.btn-amber{display:inline-flex;align-items:center;gap:8px;background:var(--amber);color:#0d1117;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:15px;letter-spacing:1px;text-transform:uppercase;padding:13px 24px;border-radius:var(--rsm);border:none;transition:transform .15s,background .15s}
+.btn-amber:active{transform:scale(.96);background:var(--amber2)}
+.btn-ghost{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--text2);font-family:'Rajdhani',sans-serif;font-weight:600;font-size:15px;letter-spacing:1px;text-transform:uppercase;padding:13px 20px;border-radius:var(--rsm);transition:border-color .15s,color .15s}
+.btn-ghost:active{border-color:var(--amber);color:var(--amber)}
+#ticker{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);overflow:hidden;white-space:nowrap;position:relative;z-index:1}
+#ticker::before,#ticker::after{content:'';position:absolute;top:0;bottom:0;z-index:2;width:32px;pointer-events:none}
+#ticker::before{left:0;background:linear-gradient(to right,var(--bg2),transparent)}
+#ticker::after{right:0;background:linear-gradient(to left,var(--bg2),transparent)}
+.ticker-track{display:inline-flex;animation:ticker 30s linear infinite}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.t-item{display:inline-flex;align-items:center;gap:8px;padding:13px 24px;font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text2);border-right:1px solid var(--border);flex-shrink:0}
+.t-item strong{color:var(--amber);font-size:14px}
+#fleet-bar{padding:12px 20px;display:flex;gap:20px;justify-content:center;background:var(--bg);border-bottom:1px solid var(--border);flex-wrap:wrap}
+.fb-item{display:flex;align-items:center;gap:6px;font-family:'Share Tech Mono',monospace;font-size:11px}
+.fb-dot{width:8px;height:8px;border-radius:50%}
+.fb-num{color:var(--text);font-size:14px;font-weight:700}
+.fb-lbl{color:var(--text3)}
+#catalogo{padding:28px 16px 150px;max-width:480px;margin:0 auto}
+.sec-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--amber);display:block;margin-bottom:6px}
+.sec-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:28px;letter-spacing:.5px;margin-bottom:20px}
+.filter-row{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;margin-bottom:20px;scrollbar-width:none}
+.filter-row::-webkit-scrollbar{display:none}
+.fbtn{flex-shrink:0;padding:8px 14px;background:var(--bg2);border:1px solid var(--border);color:var(--text2);font-family:'Rajdhani',sans-serif;font-weight:600;font-size:13px;letter-spacing:.5px;text-transform:uppercase;border-radius:var(--rsm);transition:all .15s;white-space:nowrap}
+.fbtn.active{background:rgba(245,158,11,.1);border-color:var(--amber);color:var(--amber)}
+.fbtn:active{background:rgba(245,158,11,.15)}
+#eq-grid{display:flex;flex-direction:column;gap:16px}
+.eq-card{position:relative;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:visible;cursor:pointer;transition:border-color .2s,transform .12s}
+.eq-card:active{transform:scale(.99)}
+.eq-card.in-cart{border-color:var(--amber)}
+.eq-card::before,.eq-card::after,.eq-card .cb::before,.eq-card .cb::after{content:'';position:absolute;width:13px;height:13px;border-color:var(--amber);border-style:solid;z-index:2;pointer-events:none;opacity:0;transition:opacity .2s}
+.eq-card:active::before,.eq-card:active::after,.eq-card:active .cb::before,.eq-card:active .cb::after,.eq-card.in-cart::before,.eq-card.in-cart::after,.eq-card.in-cart .cb::before,.eq-card.in-cart .cb::after{opacity:1}
+.eq-card::before{top:-1px;left:-1px;border-width:2px 0 0 2px;border-radius:var(--r) 0 0 0}
+.eq-card::after{top:-1px;right:-1px;border-width:2px 2px 0 0;border-radius:0 var(--r) 0 0}
+.eq-card .cb::before{bottom:-1px;left:-1px;border-width:0 0 2px 2px;border-radius:0 0 0 var(--r)}
+.eq-card .cb::after{bottom:-1px;right:-1px;border-width:0 2px 2px 0;border-radius:0 0 var(--r) 0}
+.card-img{position:relative;height:200px;overflow:hidden;background:var(--bg3);border-radius:var(--r) var(--r) 0 0}
+.card-img img{width:100%;height:100%;object-fit:cover}
+.card-img .iph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:56px;opacity:.12;flex-direction:column;gap:8px}
+.card-img .iph span{display:block;font-size:12px;font-family:'Share Tech Mono',monospace;color:var(--text3);letter-spacing:1px;text-transform:uppercase;opacity:.7}
+.card-img::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(22,27,34,.96) 0%,transparent 52%)}
+.card-slash{position:absolute;bottom:0;left:0;right:0;height:28px;overflow:hidden;z-index:1}
+.card-slash::before{content:'';position:absolute;bottom:-14px;left:-5%;right:-5%;height:28px;background:var(--bg2);transform:rotate(-1.2deg);transform-origin:left bottom}
+.avail-badge{position:absolute;top:12px;left:12px;z-index:2;display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:4px;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.5px;text-transform:uppercase;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.av-dot{width:5px;height:5px;border-radius:50%}
+.av-disp{background:rgba(63,185,80,.14);color:var(--green);border:1px solid rgba(63,185,80,.24)}
+.av-disp .av-dot{background:var(--green)}
+.av-resv{background:rgba(248,81,73,.14);color:var(--red);border:1px solid rgba(248,81,73,.24)}
+.av-resv .av-dot{background:var(--red)}
+.av-mant{background:rgba(210,153,34,.14);color:var(--orange);border:1px solid rgba(210,153,34,.24)}
+.av-mant .av-dot{background:var(--orange)}
+.cart-btn{position:absolute;top:12px;right:12px;z-index:2;width:32px;height:32px;border-radius:50%;background:rgba(13,17,23,.72);border:1px solid var(--border);color:var(--text2);font-size:18px;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);transition:all .15s}
+.cart-btn.on{background:rgba(245,158,11,.18);border-color:var(--amber);color:var(--amber)}
+.card-body{padding:13px 16px 15px}
+.card-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.card-eid{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:1px}
+.card-cat{font-family:'Rajdhani',sans-serif;font-weight:600;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--amber);opacity:.8}
+.card-name{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:22px;letter-spacing:.3px;margin-bottom:6px;line-height:1.1}
+.card-desc{font-size:13px;color:var(--text2);line-height:1.5;margin-bottom:12px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card-specs{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:13px}
+.cs-item{background:var(--bg3);border:1px solid var(--border);border-radius:var(--rsm);padding:7px 10px}
+.cs-k{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px}
+.cs-v{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--text)}
+.card-acts{display:flex;gap:8px;border-top:1px solid var(--border);padding-top:13px}
+.ca-ficha{flex:1;padding:10px;background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-family:'Rajdhani',sans-serif;font-weight:600;font-size:13px;letter-spacing:.5px;text-transform:uppercase;border-radius:var(--rsm);transition:border-color .15s,color .15s}
+.ca-ficha:active{border-color:var(--amber);color:var(--amber)}
+.ca-cot{flex:1;padding:10px;background:var(--amber);border:none;color:#0d1117;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;letter-spacing:.5px;text-transform:uppercase;border-radius:var(--rsm)}
+.ca-cot:active{background:var(--amber2)}
+.empty-st{text-align:center;padding:60px 20px;color:var(--text2)}
+.empty-st p{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px;margin-top:10px}
+#proyectos{background:var(--bg2);border-top:1px solid var(--border);padding:28px 16px 36px;max-width:480px;margin:0 auto}
+.proy-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.proy-item{aspect-ratio:1;border-radius:var(--rsm);overflow:hidden;background:var(--bg3)}
+.proy-item:first-child{grid-column:1/-1;aspect-ratio:16/8}
+.proy-item img{width:100%;height:100%;object-fit:cover}
+#nosotros{background:var(--bg);border-top:1px solid var(--border);padding:28px 16px;max-width:480px;margin:0 auto}
+.nos-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.nos-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:16px;text-align:center}
+.nos-card .nc-icon{font-size:28px;margin-bottom:8px}
+.nos-card .nc-num{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:32px;color:var(--amber);line-height:1}
+.nos-card .nc-label{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text2);letter-spacing:1px;margin-top:4px}
+.nos-text{font-size:14px;color:var(--text2);line-height:1.6;margin-top:16px;text-align:center}
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 20px;text-align:center;max-width:480px;margin:0 auto}
+.ft-name{font-family:'Share Tech Mono',monospace;font-size:18px;color:var(--amber);letter-spacing:3px;margin-bottom:4px}
+.ft-sub{font-size:11px;color:var(--text3);letter-spacing:1px;margin-bottom:20px}
+.ft-links{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+.ft-link{color:var(--text2);font-size:14px;display:flex;align-items:center;justify-content:center;gap:8px}
+.ft-copy{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:.5px}
+#cart-float{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);z-index:150;display:flex;align-items:center;gap:10px;background:var(--amber);color:#0d1117;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;letter-spacing:1px;text-transform:uppercase;padding:13px 22px;border-radius:var(--rsm);box-shadow:0 8px 28px rgba(245,158,11,.4);opacity:0;pointer-events:none;transition:all .3s cubic-bezier(.32,.72,0,1);white-space:nowrap;border:none}
+#cart-float.show{opacity:1;pointer-events:all;transform:translateX(-50%) translateY(0)}
+.cb-badge{background:#0d1117;color:var(--amber);width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px}
+#wa-float{position:fixed;bottom:20px;right:16px;z-index:100;display:flex;align-items:center;gap:8px;background:#25d366;color:#fff;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;letter-spacing:.5px;text-transform:uppercase;padding:12px 18px 12px 14px;border-radius:var(--rsm);box-shadow:0 4px 20px rgba(37,211,102,.4);transition:transform .15s}
+#wa-float:active{transform:scale(.95)}
+.m-ov{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;opacity:0;pointer-events:none;transition:opacity .25s;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.m-ov.open{opacity:1;pointer-events:all}
+.m-sheet{position:fixed;bottom:0;left:0;right:0;max-width:480px;margin:0 auto;background:var(--bg2);border-radius:16px 16px 0 0;border-top:1px solid var(--border);z-index:201;max-height:92svh;overflow-y:auto;transform:translateY(100%);transition:transform .35s cubic-bezier(.32,.72,0,1)}
+.m-sheet.open{transform:translateY(0)}
+.m-handle{width:36px;height:3px;background:var(--border);border-radius:2px;margin:12px auto 0}
+.eq-img-wrap{position:relative;height:215px;background:var(--bg3);overflow:hidden}
+.eq-img-wrap img{width:100%;height:100%;object-fit:cover}
+.eq-img-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:70px;opacity:.12;flex-direction:column;gap:6px}
+.eq-img-ph span{display:block;font-size:11px;font-family:'Share Tech Mono',monospace;color:var(--text3);letter-spacing:1px;text-transform:uppercase}
+.eq-img-wrap::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,var(--bg2) 0%,transparent 40%)}
+.share-btn{position:absolute;top:12px;right:12px;z-index:2;width:34px;height:34px;border-radius:50%;background:rgba(13,17,23,.72);border:1px solid var(--border);color:var(--text2);font-size:15px;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px)}
+.m-body{padding:18px 20px 32px}
+.m-eid{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text3);letter-spacing:2px;margin-bottom:6px}
+.m-avail{margin-bottom:8px}
+.m-name{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:28px;letter-spacing:.3px;line-height:1;margin-bottom:10px}
+.m-desc{font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:18px}
+.ds-title{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:3px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.ds-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.ds-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px}
+.ds-item{background:var(--bg3);border:1px solid var(--border);border-radius:var(--rsm);padding:10px 12px}
+.ds-k{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:1px;margin-bottom:3px}
+.ds-v{font-family:'Share Tech Mono',monospace;font-size:13px;color:var(--text)}
+.est-wrap{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2);border-radius:var(--rsm);padding:14px;margin-bottom:18px;display:none}
+.est-lbl{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;color:var(--amber);letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px}
+.est-days{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.est-dbtn{padding:7px 11px;background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-family:'Share Tech Mono',monospace;font-size:11px;border-radius:var(--rsm);transition:all .15s}
+.est-dbtn.on{background:rgba(245,158,11,.1);border-color:var(--amber);color:var(--amber)}
+.est-result{font-family:'Rajdhani',sans-serif;font-size:19px;font-weight:700;display:none}
+.est-result span{color:var(--amber)}
+.est-note{font-size:11px;color:var(--text3);margin-top:4px}
+.m-acts{display:flex;gap:8px}
+.m-btn-cot{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;background:var(--amber);color:#0d1117;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:15px;letter-spacing:1px;text-transform:uppercase;padding:15px;border-radius:var(--rsm);border:none}
+.m-btn-cot:active{background:var(--amber2)}
+.m-btn-cart{padding:15px 16px;background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;letter-spacing:.5px;text-transform:uppercase;border-radius:var(--rsm);transition:all .15s;white-space:nowrap}
+.m-btn-cart.on{border-color:var(--amber);color:var(--amber);background:rgba(245,158,11,.08)}
+.qt-wrap{padding:16px 20px 40px}
+.qt-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:24px;letter-spacing:.5px;margin-bottom:4px}
+.qt-sub{font-size:13px;color:var(--text2);margin-bottom:18px}
+.qt-sub b{color:var(--amber);font-weight:600}
+.qt-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.qt-chip{display:inline-flex;align-items:center;gap:6px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.22);color:var(--amber);padding:5px 10px;border-radius:var(--rsm);font-family:'Share Tech Mono',monospace;font-size:10px}
+.fg{margin-bottom:12px}
+.flbl{display:block;font-family:'Rajdhani',sans-serif;font-weight:600;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--text2);margin-bottom:5px}
+.finp,.fsel{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rsm);color:var(--text);font-family:'Barlow',sans-serif;font-size:15px;padding:12px 14px;outline:none;transition:border-color .15s;-webkit-appearance:none;appearance:none}
+.finp:focus,.fsel:focus{border-color:var(--amber)}
+.fsel{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238b949e' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.op-tog{display:flex;gap:8px}
+.op-btn{flex:1;padding:12px;background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-family:'Rajdhani',sans-serif;font-weight:600;font-size:14px;text-transform:uppercase;letter-spacing:.5px;border-radius:var(--rsm);transition:all .15s;text-align:center}
+.op-btn.on{background:rgba(245,158,11,.1);border-color:var(--amber);color:var(--amber)}
+.submit-wa{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;background:#25d366;color:#fff;border:none;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:17px;letter-spacing:1px;text-transform:uppercase;padding:16px;border-radius:var(--rsm);margin-top:14px}
+.submit-wa:active{opacity:.9}
+.qt-note{text-align:center;font-size:11px;color:var(--text3);margin-top:10px;line-height:1.5}
+#adm-lock{position:fixed;inset:0;background:var(--bg);z-index:999;display:none;flex-direction:column;align-items:center;justify-content:center;padding:32px}
+#adm-lock.show{display:flex}
+.lk-mono{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:3px;margin-bottom:14px}
+.lk-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:28px;margin-bottom:4px}
+.lk-sub{font-size:13px;color:var(--text2);margin-bottom:22px}
+.lk-inp{width:100%;max-width:280px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rsm);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:18px;padding:13px;text-align:center;letter-spacing:6px;outline:none;margin-bottom:12px}
+.lk-inp:focus{border-color:var(--amber)}
+.lk-btn{width:100%;max-width:280px;background:var(--amber);color:#0d1117;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:16px;letter-spacing:1px;text-transform:uppercase;padding:13px;border:none;border-radius:var(--rsm)}
+.lk-err{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--red);margin-top:8px;display:none}
+#adm-panel{position:fixed;inset:0;background:var(--bg);z-index:998;display:none;flex-direction:column;overflow:hidden}
+#adm-panel.show{display:flex}
+.adh{background:var(--bg2);border-bottom:1px solid var(--border);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.adh-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:18px;letter-spacing:1px}
+.adh-title span{color:var(--amber)}
+.adh-close{width:34px;height:34px;background:var(--bg3);border:1px solid var(--border);color:var(--text2);border-radius:50%;font-size:16px;display:flex;align-items:center;justify-content:center}
+.adtabs{display:flex;background:var(--bg2);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;flex-shrink:0}
+.adtabs::-webkit-scrollbar{display:none}
+.adtab{flex-shrink:0;padding:12px 15px;font-family:'Rajdhani',sans-serif;font-weight:600;font-size:13px;letter-spacing:.5px;text-transform:uppercase;color:var(--text2);border:none;background:none;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap}
+.adtab.on{color:var(--amber);border-bottom-color:var(--amber)}
+.adbody{flex:1;overflow-y:auto;padding:20px}
+.adsec{display:none}
+.adsec.on{display:block}
+.ads-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:20px;margin-bottom:14px;letter-spacing:.5px}
+.adc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:10px}
+.adc-name{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:16px;margin-bottom:3px}
+.adc-meta{font-size:12px;color:var(--text2);margin-bottom:10px}
+.adc-acts{display:flex;gap:8px}
+.adb{flex:1;padding:9px;border-radius:var(--rsm);border:none;font-family:'Rajdhani',sans-serif;font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:.5px}
+.adb-edit{background:var(--bg3);color:var(--text2);border:1px solid var(--border)}
+.adb-del{background:rgba(248,81,73,.1);color:var(--red);border:1px solid rgba(248,81,73,.2)}
+.adb-save{background:var(--amber);color:#0d1117;width:100%;padding:13px;margin-top:6px}
+.adb-sec{width:100%;padding:11px;margin-top:6px;background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-family:'Rajdhani',sans-serif;font-weight:600;font-size:14px;text-transform:uppercase;border-radius:var(--rsm);display:none}
+.adf{margin-bottom:12px}
+.adl{display:block;font-family:'Rajdhani',sans-serif;font-weight:600;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--text2);margin-bottom:5px}
+.adi,.ads,.adt{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rsm);color:var(--text);font-family:'Barlow',sans-serif;font-size:15px;padding:11px 13px;outline:none;transition:border-color .15s;-webkit-appearance:none;appearance:none}
+.adi:focus,.ads:focus,.adt:focus{border-color:var(--amber)}
+.adt{min-height:70px;resize:vertical}
+.ads{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238b949e' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+.adrow{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ad-hint{font-size:11px;color:var(--text3);margin-top:3px}
+.addiv{border:none;border-top:1px solid var(--border);margin:16px 0}
+.st-row{display:grid;grid-template-columns:80px 1fr;gap:8px}
+#toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--bg2);border:1px solid var(--border);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:12px;padding:10px 18px;border-radius:var(--rsm);z-index:9999;opacity:0;transition:all .25s;pointer-events:none;white-space:nowrap}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#adm-trigger{position:fixed;bottom:0;right:0;width:50px;height:50px;z-index:50;opacity:0}
+.fu{opacity:0;transform:translateY(20px);transition:opacity .45s ease,transform .45s ease}
+.fu.vis{opacity:1;transform:translateY(0)}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section id="hero">
+  <img id="hero-img" src="images/cover.jpg" alt="Sethika Constructora" onerror="this.style.display='none'">
+  <div class="hero-grid"></div>
+  <div class="hero-vig"></div>
+  <div class="scanline"></div>
+  <div class="hero-topbar">
+    <div class="hero-brand" id="brand-tap" onclick="brandTap()" style="user-select:none;">SETHIKA<b>CONSTRUCTORA</b></div>
+    <div class="status-pill"><div class="s-dot"></div>OPERATIVO</div>
+  </div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">Soluciones Integrales en Construcción</div>
+    <h1 class="hero-title">SETHIKA<br><em>CONSTRUCTORA</em></h1>
+    <p class="hero-desc">Equipos pesados en renta · Movimiento de tierra · Excavaciones · Demoliciones · Suministro de agregados.</p>
+    <div class="hero-fleet" id="hero-fleet"></div>
+    <div class="hero-actions">
+      <a href="#catalogo" class="btn-amber">Ver Flota ↓</a>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div id="ticker"><div class="ticker-track" id="ticker-track"></div></div>
+
+<!-- FLEET BAR -->
+<div id="fleet-bar"></div>
+
+<!-- CATALOG -->
+<section id="catalogo">
+  <div class="fu">
+    <span class="sec-label">// flota completa</span>
+    <div class="sec-title">Equipos en Renta</div>
+  </div>
+  <div class="filter-row" id="filter-row">
+    <button class="fbtn active" data-cat="Todos" onclick="filterCat(this)">Todos</button>
+  </div>
+  <div id="eq-grid"></div>
+</section>
+
+<!-- NOSOTROS -->
+<section id="nosotros">
+  <span class="sec-label">// sobre nosotros</span>
+  <div class="sec-title">Sethika Constructora</div>
+  <div class="nos-grid">
+    <div class="nos-card">
+      <div class="nc-icon">🏗️</div>
+      <div class="nc-num" id="nc-proy">120</div>
+      <div class="nc-label">Proyectos</div>
+    </div>
+    <div class="nos-card">
+      <div class="nc-icon">⏱️</div>
+      <div class="nc-num" id="nc-anios">15</div>
+      <div class="nc-label">Años Activos</div>
+    </div>
+    <div class="nos-card">
+      <div class="nc-icon">🚜</div>
+      <div class="nc-num" id="nc-eq">7</div>
+      <div class="nc-label">Equipos</div>
+    </div>
+    <div class="nos-card">
+      <div class="nc-icon">📍</div>
+      <div class="nc-num">RD</div>
+      <div class="nc-label">Nacional</div>
+    </div>
+  </div>
+  <p class="nos-text">Empresa dedicada al desarrollo de proyectos de construcción en todo el territorio nacional. Ofrecemos soluciones integrales para viviendas, reformas, remodelaciones, construcciones industriales y servicios de ingeniería.</p>
+</section>
+
+<!-- PROJECTS -->
+<section id="proyectos">
+  <span class="sec-label">// obras realizadas</span>
+  <div class="sec-title">Galería de Proyectos</div>
+  <div class="proy-grid" id="proy-grid"></div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="ft-name" id="ft-name">SETHIKA CONSTRUCTORA</div>
+  <div class="ft-sub" id="ft-sub">EQUIPOS PESADOS · RD</div>
+  <div class="ft-links">
+    <a class="ft-link" id="ft-wa" href="#">📲 Consultar por WhatsApp</a>
+    <a class="ft-link" id="ft-ig" href="#" style="display:none;"></a>
+    <a class="ft-link" id="ft-fb" href="#" style="display:none;"></a>
+  </div>
+  <div class="ft-copy" id="ft-copy"></div>
+</footer>
+
+<!-- CART FLOAT -->
+<button id="cart-float" onclick="openCartQt()">
+  <div class="cb-badge" id="cb-badge">0</div>COTIZAR SELECCIÓN
+</button>
+
+<!-- WA FLOAT -->
+<a id="wa-float" href="#">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  WhatsApp
+</a>
+
+<!-- EQUIPMENT MODAL -->
+<div class="m-ov" id="eq-ov" onclick="closeEq()"></div>
+<div class="m-sheet" id="eq-sheet">
+  <div class="m-handle"></div>
+  <div class="eq-img-wrap" id="eq-img-wrap">
+    <div class="eq-img-ph" id="eq-img-ph">🏗️<span id="eq-img-ph-txt"></span></div>
+    <img id="eq-img" src="" alt="" style="display:none">
+    <button class="share-btn" onclick="shareEq()">↗</button>
+  </div>
+  <div class="m-body">
+    <div class="m-eid" id="m-eid"></div>
+    <div class="m-avail" id="m-avail"></div>
+    <div class="m-name" id="m-name"></div>
+    <div class="m-desc" id="m-desc"></div>
+    <div class="ds-title">Ficha Técnica</div>
+    <div class="ds-grid" id="ds-grid"></div>
+    <div class="est-wrap" id="est-wrap">
+      <div class="est-lbl">⚡ Estimador de Costo</div>
+      <div class="est-days" id="est-days"></div>
+      <div class="est-result" id="est-result">Estimado: <span id="est-val"></span></div>
+      <div class="est-note">Estimado referencial. Precio final se acuerda con la empresa.</div>
+    </div>
+    <div class="m-acts">
+      <button class="m-btn-cot" onclick="openQtFromEq()">📋 Solicitar Cotización</button>
+      <button class="m-btn-cart" id="m-cart-btn" onclick="toggleCartFromModal()">+ Paquete</button>
+    </div>
+  </div>
+</div>
+
+<!-- QUOTE MODAL -->
+<div class="m-ov" id="qt-ov" onclick="closeQt()"></div>
+<div class="m-sheet" id="qt-sheet">
+  <div class="m-handle"></div>
+  <div class="qt-wrap">
+    <div class="qt-title">Solicitar Cotización</div>
+    <div class="qt-sub" id="qt-sub">Completa los datos y te respondemos rápido.</div>
+    <div class="qt-chips" id="qt-chips" style="display:none"></div>
+    <div class="fg"><label class="flbl">Nombre *</label><input class="finp" id="q-nombre" placeholder="Tu nombre"></div>
+    <div class="fg"><label class="flbl">Teléfono *</label><input class="finp" id="q-tel" type="tel" placeholder="809-000-0000"></div>
+    <div class="fg"><label class="flbl">Tipo de proyecto</label>
+      <select class="fsel" id="q-tipo">
+        <option value="">Seleccionar...</option>
+        <option>Movimiento de tierra</option><option>Construcción</option>
+        <option>Demolición</option><option>Excavación</option>
+        <option>Compactación / Nivelación</option><option>Venta de agregados</option><option>Otro</option>
+      </select>
+    </div>
+    <div class="frow">
+      <div class="fg"><label class="flbl">Duración</label>
+        <select class="fsel" id="q-dur">
+          <option value="">Seleccionar...</option>
+          <option>1 día</option><option>2–3 días</option>
+          <option>1 semana</option><option>2 semanas</option><option>1 mes +</option>
+        </select>
+      </div>
+      <div class="fg"><label class="flbl">Zona</label><input class="finp" id="q-zona" placeholder="Sector / Ciudad"></div>
+    </div>
+    <div class="fg"><label class="flbl">¿Necesita operador?</label>
+      <div class="op-tog">
+        <button class="op-btn on" id="op-si" onclick="selOp('Sí')">✔ Sí</button>
+        <button class="op-btn"   id="op-no" onclick="selOp('No')">✖ No</button>
+      </div>
+    </div>
+    <button class="submit-wa" onclick="sendQt()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      Enviar por WhatsApp
+    </button>
+    <div class="qt-note">Se abrirá WhatsApp con tu consulta. El equipo te confirmará disponibilidad y precio.</div>
+  </div>
+</div>
+
+<!-- ADMIN LOCK -->
+<div id="adm-lock">
+  <div class="lk-mono">// ACCESO RESTRINGIDO</div>
+  <div class="lk-title">Panel Admin</div>
+  <div class="lk-sub">Ingresa la contraseña</div>
+  <input class="lk-inp" type="password" id="lk-pass" placeholder="••••••" onkeydown="if(event.key==='Enter')tryLogin()">
+  <br>
+  <button class="lk-btn" onclick="tryLogin()">Acceder</button>
+  <div class="lk-err" id="lk-err">Contraseña incorrecta</div>
+  <br><br>
+  <button onclick="closeLock()" style="background:none;border:none;color:var(--text2);font-size:14px;cursor:pointer;">← Volver</button>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="adm-panel">
+  <div class="adh">
+    <div class="adh-title">Admin <span>Panel</span></div>
+    <button class="adh-close" onclick="closeAdmin()">✕</button>
+  </div>
+  <div class="adtabs">
+    <button class="adtab" onclick="swTab('equipos',this)">🏗 Equipos</button>
+    <button class="adtab" onclick="swTab('stats',this)">📊 Datos</button>
+    <button class="adtab" onclick="swTab('proyectos',this)">📸 Proyectos</button>
+    <button class="adtab" onclick="swTab('negocio',this)">🏢 Negocio</button>
+    <button class="adtab" onclick="swTab('pass',this)">🔑 Clave</button>
+  </div>
+  <div class="adbody">
+
+    <div class="adsec" id="tab-equipos">
+      <div class="ads-title">Equipos</div>
+      <div id="adm-eq-list"></div>
+      <hr class="addiv">
+      <div class="ads-title" id="eq-flbl">+ Nuevo Equipo</div>
+      <div class="adc">
+        <input type="hidden" id="eid">
+        <div class="adrow">
+          <div class="adf"><label class="adl">Nombre *</label><input class="adi" id="ef-n" placeholder="Retro Pala CAT 320"></div>
+          <div class="adf"><label class="adl">Emoji</label><input class="adi" id="ef-e" placeholder="🦾" maxlength="4"></div>
+        </div>
+        <div class="adrow">
+          <div class="adf"><label class="adl">Categoría *</label>
+            <select class="ads" id="ef-c">
+              <option>Retro Pala</option><option>Retroexcavadora</option><option>Rodillos Compactadores</option>
+              <option>Compresor con Martillo</option><option>Minicargador</option><option>Greador</option>
+              <option>Movimiento de Tierra</option><option>Otro</option>
+            </select>
+          </div>
+          <div class="adf"><label class="adl">Disponibilidad</label>
+            <select class="ads" id="ef-d">
+              <option value="disponible">✅ Disponible</option>
+              <option value="reservado">🔴 Reservado</option>
+              <option value="mantenimiento">🟡 Mantenimiento</option>
+            </select>
+          </div>
+        </div>
+        <div class="adf"><label class="adl">Descripción</label><textarea class="adt" id="ef-desc" placeholder="Describe el equipo..."></textarea></div>
+        <div class="adrow">
+          <div class="adf"><label class="adl">Capacidad</label><input class="adi" id="ef-cap" placeholder="20 ton"></div>
+          <div class="adf"><label class="adl">Año</label><input class="adi" id="ef-anio" placeholder="2022"></div>
+        </div>
+        <div class="adrow">
+          <div class="adf"><label class="adl">Operador</label>
+            <select class="ads" id="ef-op"><option>Sí</option><option>No</option><option>Opcional</option></select>
+          </div>
+          <div class="adf"><label class="adl">Horario máx.</label><input class="adi" id="ef-hrs" placeholder="10h/día"></div>
+        </div>
+        <div class="adf">
+          <label class="adl">Tarifa diaria RD$ (para estimador)</label>
+          <input class="adi" id="ef-tarifa" type="number" placeholder="Ej: 15000">
+          <div class="ad-hint">Opcional. Si la pones, el cliente ve un estimado de costo.</div>
+        </div>
+        <div class="adf"><label class="adl">URL de foto</label><input class="adi" id="ef-foto" placeholder="images/nombre.jpg"></div>
+        <button class="adb adb-save" onclick="saveEq()">Guardar Equipo</button>
+        <button class="adb-sec" id="adm-cancel" onclick="cancelEdit()">Cancelar edición</button>
+      </div>
+    </div>
+
+    <div class="adsec" id="tab-stats">
+      <div class="ads-title">Números Destacados</div>
+      <div class="adc">
+        <div class="adf"><label class="adl">Stat 1</label><div class="st-row"><input class="adi" id="s1n" type="number" placeholder="120"><input class="adi" id="s1l" placeholder="Proyectos completados"></div></div>
+        <div class="adf"><label class="adl">Stat 2</label><div class="st-row"><input class="adi" id="s2n" type="number" placeholder="15"><input class="adi" id="s2l" placeholder="Años de experiencia"></div></div>
+        <div class="adf"><label class="adl">Stat 3</label><div class="st-row"><input class="adi" id="s3n" type="number" placeholder="7"><input class="adi" id="s3l" placeholder="Equipos en flota"></div></div>
+        <button class="adb adb-save" onclick="saveStats()">Guardar</button>
+      </div>
+    </div>
+
+    <div class="adsec" id="tab-proyectos">
+      <div class="ads-title">Fotos de Proyectos</div>
+      <div class="adc">
+        <div id="adm-proy"></div>
+        <div class="adf" style="margin-top:10px"><label class="adl">URL de foto</label><input class="adi" id="pf-url" placeholder="https://..."></div>
+        <button class="adb adb-save" onclick="addProy()">+ Agregar foto</button>
+      </div>
+    </div>
+
+    <div class="adsec" id="tab-negocio">
+      <div class="ads-title">Información del Negocio</div>
+      <div class="adc">
+        <div class="adf"><label class="adl">Nombre del negocio</label><input class="adi" id="nf-nombre" placeholder="Sethika Constructora"></div>
+        <div class="adf"><label class="adl">Tagline</label><input class="adi" id="nf-tag" placeholder="Equipos Pesados · RD"></div>
+        <div class="adf"><label class="adl">WhatsApp (solo números)</label><input class="adi" id="nf-wa" type="tel" placeholder="8296400203"></div>
+        <div class="adf"><label class="adl">Instagram (@usuario)</label><input class="adi" id="nf-ig" placeholder="@Sethikaconstructora"></div>
+        <div class="adf"><label class="adl">Facebook</label><input class="adi" id="nf-fb"></div>
+        <button class="adb adb-save" onclick="saveNeg()">Guardar</button>
+      </div>
+    </div>
+
+    <div class="adsec" id="tab-pass">
+      <div class="ads-title">Cambiar Contraseña</div>
+      <div class="adc">
+        <div class="adf"><label class="adl">Contraseña actual</label><input class="adi" type="password" id="pa-act" placeholder="••••••"></div>
+        <div class="adf"><label class="adl">Nueva</label><input class="adi" type="password" id="pa-new" placeholder="••••••"></div>
+        <div class="adf"><label class="adl">Confirmar</label><input class="adi" type="password" id="pa-conf" placeholder="••••••"></div>
+        <button class="adb adb-save" onclick="changePass()">Cambiar</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const SK='sethika_v2';
+let cart=[],curEqId=null,qtMode='general',opVal='Sí';
+const PFX={'Retro Pala':'RP','Retroexcavadora':'RX','Rodillos Compactadores':'RC','Compresor con Martillo':'CM','Minicargador':'MC','Greador':'GR','Movimiento de Tierra':'MT','Otro':'OT'};
+
+function gs(){
+  try{const r=localStorage.getItem(SK);if(r)return JSON.parse(r);}catch(e){}
+  return{
+    pass:'123456',
+    equipos:[
+      {id:1,nombre:'Retro Pala',emoji:'🦾',categoria:'Retro Pala',disponibilidad:'disponible',
+       desc:'Retro palas en excelente estado, ideales para trabajos de excavación, carga y nivelación. Diseño versátil para espacios amplios o reducidos.',
+       capacidad:'20 ton',anio:'2023',operador:'Sí',horas:'10h/día',tarifa:18000,foto:'images/retro_pala.jpg'},
+      {id:2,nombre:'Retroexcavadora',emoji:'🚜',categoria:'Retroexcavadora',disponibilidad:'disponible',
+       desc:'Potentes y confiables para excavaciones profundas, apertura de zanjas y movimientos de tierra a gran escala. Fuerza y precisión en cada obra.',
+       capacidad:'15 ton',anio:'2022',operador:'Sí',horas:'10h/día',tarifa:15000,foto:'images/retro_excavadora.jpg'},
+      {id:3,nombre:'Rodillos Compactadores',emoji:'⚙️',categoria:'Rodillos Compactadores',disponibilidad:'disponible',
+       desc:'Para todo tipo de terreno. Compactación uniforme y resistente, esencial para preparación de suelos y asfaltados.',
+       capacidad:'8 ton',anio:'2023',operador:'Sí',horas:'8h/día',tarifa:9000,foto:'images/rodillos.jpg'},
+      {id:4,nombre:'Compresor con Martillo',emoji:'🔨',categoria:'Compresor con Martillo',disponibilidad:'disponible',
+       desc:'Ideales para romper aceras, pavimentos y estructuras de concreto. Equipos potentes y seguros para trabajo pesado con máxima eficiencia.',
+       capacidad:'6 bar',anio:'2022',operador:'Sí',horas:'8h/día',tarifa:8000,foto:'images/compresor.jpg'},
+      {id:5,nombre:'Minicargador',emoji:'🧱',categoria:'Minicargador',disponibilidad:'disponible',
+       desc:'Versátiles y eficientes, perfectos para cargar, empujar o nivelar materiales en espacios reducidos. Optimizan tiempo y productividad.',
+       capacidad:'1.5 ton',anio:'2023',operador:'Sí',horas:'10h/día',tarifa:10000,foto:'images/minicargador.jpg'},
+      {id:6,nombre:'Greador',emoji:'🛣️',categoria:'Greador',disponibilidad:'disponible',
+       desc:'Potentes, ideales para nivelar terrenos, perfilar caminos y preparar superficies en proyectos de construcción. Precisión, estabilidad y alto rendimiento.',
+       capacidad:'130 HP',anio:'2022',operador:'Sí',horas:'10h/día',tarifa:20000,foto:'images/greadar.jpg'},
+      {id:7,nombre:'Movimiento de Tierra',emoji:'🏗️',categoria:'Movimiento de Tierra',disponibilidad:'disponible',
+       desc:'Excavaciones, venta de agregados y suministro de material de relleno. Garantizamos cumplimiento, calidad y eficiencia en cada proyecto.',
+       capacidad:'Varios',anio:'2024',operador:'Sí',horas:'Flexible',tarifa:12000,foto:'images/movimiento_tierra.jpg'}
+    ],
+    stats:[{num:120,label:'Proyectos'},{num:15,label:'Años Activos'},{num:7,label:'Equipos en Flota'}],
+    proyectos:['images/empresa.jpg'],
+    negocio:{nombre:'Sethika Constructora',tagline:'EQUIPOS PESADOS · RD',wa:'8296400203',ig:'Sethikaconstructora',fb:''}
+  };
+}
+function ss(s){localStorage.setItem(SK,JSON.stringify(s));}
+
+document.addEventListener('DOMContentLoaded',()=>{applyState();renderGrid();renderProy();setupObs();});
+
+function applyState(){
+  const s=gs(),n=s.negocio;
+  const disp=s.equipos.filter(e=>e.disponibilidad==='disponible').length;
+  const resv=s.equipos.filter(e=>e.disponibilidad==='reservado').length;
+  const mant=s.equipos.filter(e=>e.disponibilidad==='mantenimiento').length;
+  const tot=s.equipos.length;
+  document.getElementById('hero-fleet').innerHTML=
+    `<div class="hf-item"><div class="hf-dot" style="background:#3fb950"></div><span style="color:#e6edf3">${disp}</span>&nbsp;<span style="color:#484f58">disponibles</span></div>`+
+    (resv?`<div class="hf-item"><div class="hf-dot" style="background:#f85149"></div><span style="color:#e6edf3">${resv}</span>&nbsp;<span style="color:#484f58">reservados</span></div>`:'')+
+    `<div class="hf-item"><div class="hf-dot" style="background:#484f58"></div><span style="color:#e6edf3">${tot}</span>&nbsp;<span style="color:#484f58">total</span></div>`;
+  document.getElementById('fleet-bar').innerHTML=
+    `<div class="fb-item"><div class="fb-dot" style="background:#3fb950"></div><span class="fb-num">${disp}</span><span class="fb-lbl">&nbsp;Disponibles</span></div>`+
+    `<div class="fb-item"><div class="fb-dot" style="background:#f85149"></div><span class="fb-num">${resv}</span><span class="fb-lbl">&nbsp;Reservados</span></div>`+
+    `<div class="fb-item"><div class="fb-dot" style="background:#d29922"></div><span class="fb-num">${mant}</span><span class="fb-lbl">&nbsp;Mantenimiento</span></div>`;
+  buildTicker(s);
+  document.getElementById('ft-name').textContent=n.nombre.toUpperCase();
+  document.getElementById('ft-sub').textContent=n.tagline.toUpperCase();
+  document.getElementById('ft-copy').textContent=`© ${new Date().getFullYear()} ${n.nombre.toUpperCase()} · TODOS LOS DERECHOS RESERVADOS`;
+  const wh=`https://wa.me/${n.wa}`;
+  document.getElementById('ft-wa').href=wh;
+  document.getElementById('wa-float').href=wh;
+  if(n.ig){const el=document.getElementById('ft-ig');el.href=`https://instagram.com/${n.ig.replace('@','')}`;el.textContent=`📸 ${n.ig}`;el.style.display='flex';}
+  if(n.fb){const el=document.getElementById('ft-fb');el.href=n.fb.startsWith('http')?n.fb:`https://facebook.com/${n.fb}`;el.textContent=`👥 ${n.fb}`;el.style.display='flex';}
+  // stats
+  if(s.stats[0])document.getElementById('nc-proy').textContent=s.stats[0].num;
+  if(s.stats[1])document.getElementById('nc-anios').textContent=s.stats[1].num;
+  if(s.stats[2])document.getElementById('nc-eq').textContent=s.stats[2].num;
+}
+
+function buildTicker(s){
+  const items=s.stats.map(st=>`<div class="t-item"><strong>+${st.num}</strong>${st.label}</div>`);
+  items.push(`<div class="t-item">▸&nbsp;Cotiza gratis por WhatsApp</div>`);
+  items.push(`<div class="t-item">▸&nbsp;Operadores certificados</div>`);
+  items.push(`<div class="t-item">▸&nbsp;Cobertura nacional</div>`);
+  const html=[...items,...items].join('');
+  document.getElementById('ticker-track').innerHTML=html;
+}
+
+let curCat='Todos';
+function renderGrid(){
+  const s=gs(),grid=document.getElementById('eq-grid'),fr=document.getElementById('filter-row');
+  const cats=['Todos',...new Set(s.equipos.map(e=>e.categoria))];
+  fr.innerHTML='';
+  cats.forEach(cat=>{
+    const b=document.createElement('button');
+    b.className='fbtn'+(cat===curCat?' active':'');b.dataset.cat=cat;b.textContent=cat;
+    b.onclick=()=>filterCat(b);fr.appendChild(b);
+  });
+  const list=curCat==='Todos'?s.equipos:s.equipos.filter(e=>e.categoria===curCat);
+  grid.innerHTML='';
+  if(!list.length){grid.innerHTML='<div class="empty-st"><div style="font-size:40px;opacity:.2">🏗️</div><p>SIN EQUIPOS EN ESTA CATEGORÍA</p></div>';return;}
+  list.forEach((eq,i)=>{
+    const bc=eq.disponibilidad==='disponible'?'av-disp':eq.disponibilidad==='reservado'?'av-resv':'av-mant';
+    const bt=eq.disponibilidad==='disponible'?'DISPONIBLE':eq.disponibilidad==='reservado'?'RESERVADO':'MANTENIMIENTO';
+    const pfx=PFX[eq.categoria]||'OT';
+    const seq=s.equipos.findIndex(e=>e.id===eq.id)+1;
+    const eid=`${pfx}-${String(seq).padStart(3,'0')}`;
+    const inCart=cart.includes(eq.id);
+    const specs=[];
+    if(eq.capacidad)specs.push(['CAPACIDAD',eq.capacidad]);
+    if(eq.anio)specs.push(['AÑO',eq.anio]);
+    if(eq.operador)specs.push(['OPERADOR',eq.operador]);
+    if(eq.tarifa)specs.push(['RD$/DÍA',Number(eq.tarifa).toLocaleString()]);
+    const specsHtml=specs.map(([k,v])=>`<div class="cs-item"><div class="cs-k">${k}</div><div class="cs-v">${v}</div></div>`).join('');
+    const card=document.createElement('div');
+    card.className='eq-card fu'+(inCart?' in-cart':'');
+    card.style.transitionDelay=`${i*.06}s`;
+    card.id=`card-${eq.id}`;
+    card.innerHTML=`
+      <div class="card-img">
+        ${eq.foto?`<img src="${eq.foto}" alt="${eq.nombre}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`:''}
+        <div class="iph" ${eq.foto?'style="display:none"':''}>${eq.emoji||'🏗️'}<span>${eq.categoria}</span></div>
+        <div class="avail-badge ${bc}"><div class="av-dot"></div>${bt}</div>
+        <button class="cart-btn${inCart?' on':''}" id="cb-${eq.id}" onclick="event.stopPropagation();toggleCart(${eq.id})">${inCart?'✓':'+'}</button>
+        <div class="card-slash"></div>
+      </div>
+      <div class="cb"></div>
+      <div class="card-body">
+        <div class="card-meta"><div class="card-eid">${eid}</div><div class="card-cat">${eq.categoria}</div></div>
+        <div class="card-name">${eq.nombre}</div>
+        <div class="card-desc">${eq.desc||''}</div>
+        <div class="card-specs">${specsHtml}</div>
+        <div class="card-acts">
+          <button class="ca-ficha" onclick="openEq(${eq.id})">Ver Ficha</button>
+          <button class="ca-cot" onclick="event.stopPropagation();openQtSingle(${eq.id})">Cotizar</button>
+        </div>
+      </div>`;
+    grid.appendChild(card);
+  });
+  setTimeout(()=>{document.querySelectorAll('.fu:not(.vis)').forEach(el=>obs.observe(el));},50);
+}
+
+function filterCat(btn){
+  curCat=btn.dataset.cat;
+  document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');renderGrid();
+}
+
+function renderProy(){
+  const s=gs(),sec=document.getElementById('proyectos'),grid=document.getElementById('proy-grid');
+  if(!s.proyectos||!s.proyectos.length){sec.style.display='none';return;}
+  sec.style.display='block';
+  grid.innerHTML=s.proyectos.map(u=>`<div class="proy-item"><img src="${u}" loading="lazy" onerror="this.parentElement.style.display='none'"></div>`).join('');
+}
+
+function toggleCart(id){
+  const i=cart.indexOf(id);i>=0?cart.splice(i,1):cart.push(id);updateCartUI();
+}
+function toggleCartFromModal(){
+  if(!curEqId)return;toggleCart(curEqId);
+  const on=cart.includes(curEqId);
+  const btn=document.getElementById('m-cart-btn');
+  btn.textContent=on?'✓ En paquete':'+ Paquete';btn.classList.toggle('on',on);
+}
+function updateCartUI(){
+  const n=cart.length;
+  document.getElementById('cb-badge').textContent=n;
+  document.getElementById('cart-float').classList.toggle('show',n>0);
+  const s=gs();
+  s.equipos.forEach(eq=>{
+    const btn=document.getElementById(`cb-${eq.id}`),card=document.getElementById(`card-${eq.id}`);
+    const on=cart.includes(eq.id);
+    if(btn){btn.textContent=on?'✓':'+';btn.classList.toggle('on',on);}
+    if(card)card.classList.toggle('in-cart',on);
+  });
+}
+function openCartQt(){
+  qtMode='multi';const s=gs();
+  const sel=s.equipos.filter(e=>cart.includes(e.id));
+  const chips=document.getElementById('qt-chips');
+  chips.innerHTML=sel.map(e=>`<div class="qt-chip">🏗 ${e.nombre}</div>`).join('');
+  chips.style.display='flex';
+  document.getElementById('qt-sub').innerHTML=`Cotizando <b>${sel.length} equipo(s)</b> a la vez.`;
+  openSheet('qt-ov','qt-sheet');
+}
+
+function openEq(id){
+  const s=gs(),eq=s.equipos.find(e=>e.id===id);if(!eq)return;
+  curEqId=id;
+  const pfx=PFX[eq.categoria]||'OT';
+  const seq=s.equipos.findIndex(e=>e.id===eq.id)+1;
+  const eid=`${pfx}-${String(seq).padStart(3,'0')}`;
+  const bc=eq.disponibilidad==='disponible'?'av-disp':eq.disponibilidad==='reservado'?'av-resv':'av-mant';
+  const bt=eq.disponibilidad==='disponible'?'DISPONIBLE':eq.disponibilidad==='reservado'?'RESERVADO':'MANTENIMIENTO';
+  document.getElementById('m-eid').textContent=eid;
+  document.getElementById('m-avail').innerHTML=`<div class="avail-badge ${bc}" style="display:inline-flex"><div class="av-dot"></div>${bt}</div>`;
+  document.getElementById('m-name').textContent=eq.nombre;
+  document.getElementById('m-desc').textContent=eq.desc||'';
+  const img=document.getElementById('eq-img'),ph=document.getElementById('eq-img-ph'),pht=document.getElementById('eq-img-ph-txt');
+  if(eq.foto){img.src=eq.foto;img.style.display='block';ph.style.display='none';}
+  else{img.style.display='none';ph.style.display='flex';ph.innerHTML=(eq.emoji||'🏗️')+`<span id="eq-img-ph-txt">${eq.categoria}</span>`;}
+  const specs=[];
+  if(eq.capacidad)specs.push(['CAPACIDAD',eq.capacidad]);
+  if(eq.anio)specs.push(['AÑO / MODELO',eq.anio]);
+  if(eq.operador)specs.push(['OPERADOR',eq.operador]);
+  if(eq.horas)specs.push(['HORARIO MÁX',eq.horas]);
+  if(eq.categoria)specs.push(['TIPO',eq.categoria]);
+  if(eq.tarifa)specs.push(['TARIFA RD$/DÍA',Number(eq.tarifa).toLocaleString()]);
+  document.getElementById('ds-grid').innerHTML=specs.map(([k,v])=>`<div class="ds-item"><div class="ds-k">${k}</div><div class="ds-v">${v}</div></div>`).join('');
+  const ew=document.getElementById('est-wrap');
+  if(eq.tarifa){
+    ew.style.display='block';
+    const days=[1,3,7,14,30],labels=['1 día','3 días','1 semana','2 semanas','1 mes'];
+    document.getElementById('est-days').innerHTML=days.map((d,i)=>`<button class="est-dbtn" data-d="${d}" data-t="${eq.tarifa}" onclick="calcEst(this)">${labels[i]}</button>`).join('');
+    document.getElementById('est-result').style.display='none';
+  }else{ew.style.display='none';}
+  const on=cart.includes(id);
+  const cb=document.getElementById('m-cart-btn');cb.textContent=on?'✓ En paquete':'+ Paquete';cb.classList.toggle('on',on);
+  openSheet('eq-ov','eq-sheet');
+}
+function calcEst(btn){
+  document.querySelectorAll('.est-dbtn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');
+  const d=parseInt(btn.dataset.d),t=parseInt(btn.dataset.t);
+  const min=(t*d*.9).toLocaleString('es-DO'),max=(t*d*1.1).toLocaleString('es-DO');
+  const r=document.getElementById('est-result');
+  document.getElementById('est-val').textContent=`RD$${min} – RD$${max}`;r.style.display='block';
+}
+function shareEq(){
+  const s=gs(),eq=s.equipos.find(e=>e.id===curEqId);if(!eq)return;
+  const txt=`🏗️ *${eq.nombre}*\nCategoría: ${eq.categoria}\nEstado: ${eq.disponibilidad}\nCapacidad: ${eq.capacidad||'–'} · Año: ${eq.anio||'–'}\n\nVer catálogo: ${location.href}`;
+  if(navigator.share){navigator.share({title:eq.nombre,text:txt}).catch(()=>{});}
+  else{navigator.clipboard.writeText(txt).then(()=>toast('📋 Info copiada'));}
+}
+function closeEq(){closeSheet('eq-ov','eq-sheet');}
+function openQtFromEq(){closeEq();setTimeout(()=>openQtSingle(curEqId),220);}
+
+function openQtSingle(id){
+  qtMode='single';curEqId=id;
+  const s=gs(),eq=s.equipos.find(e=>e.id===id);
+  document.getElementById('qt-sub').innerHTML=eq?`Equipo: <b>${eq.nombre}</b>`:'Cuéntanos sobre tu proyecto.';
+  document.getElementById('qt-chips').style.display='none';
+  openSheet('qt-ov','qt-sheet');
+}
+function openQtGeneral(){
+  qtMode='general';curEqId=null;
+  document.getElementById('qt-sub').innerHTML='Cuéntanos sobre tu proyecto y te asesoramos.';
+  document.getElementById('qt-chips').style.display='none';
+  openSheet('qt-ov','qt-sheet');
+}
+function closeQt(){closeSheet('qt-ov','qt-sheet');}
+function selOp(v){opVal=v;document.getElementById('op-si').classList.toggle('on',v==='Sí');document.getElementById('op-no').classList.toggle('on',v==='No');}
+function sendQt(){
+  const nombre=document.getElementById('q-nombre').value.trim(),tel=document.getElementById('q-tel').value.trim();
+  if(!nombre||!tel){toast('⚠ Nombre y teléfono son requeridos');return;}
+  const s=gs();let eqStr='';
+  if(qtMode==='multi'&&cart.length){eqStr=s.equipos.filter(e=>cart.includes(e.id)).map(e=>`• ${e.nombre}`).join('\n');}
+  else if(qtMode==='single'&&curEqId){const eq=s.equipos.find(e=>e.id===curEqId);eqStr=eq?eq.nombre:'–';}
+  else{eqStr='Consulta general';}
+  const tipo=document.getElementById('q-tipo').value,dur=document.getElementById('q-dur').value,zona=document.getElementById('q-zona').value;
+  let msg=`🏗️ *Solicitud de Cotización*\n\n`;
+  msg+=qtMode==='multi'?`📋 *Equipos solicitados:*\n${eqStr}\n`:`📋 *Equipo:* ${eqStr}\n`;
+  msg+=`\n👤 *Nombre:* ${nombre}\n📞 *Teléfono:* ${tel}`;
+  if(tipo)msg+=`\n🔧 *Proyecto:* ${tipo}`;
+  if(dur)msg+=`\n⏱ *Duración:* ${dur}`;
+  if(zona)msg+=`\n📍 *Zona:* ${zona}`;
+  msg+=`\n👷 *Operador:* ${opVal}\n\n_Enviado desde el catálogo digital Sethika Constructora._`;
+  window.open(`https://wa.me/${s.negocio.wa}?text=${encodeURIComponent(msg)}`,'_blank');
+  closeQt();
+  if(qtMode==='multi'){cart=[];updateCartUI();}
+  ['q-nombre','q-tel','q-zona'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('q-tipo').value='';document.getElementById('q-dur').value='';selOp('Sí');
+}
+
+function openSheet(ov,sh){document.getElementById(ov).classList.add('open');document.getElementById(sh).classList.add('open');document.body.style.overflow='hidden';}
+function closeSheet(ov,sh){document.getElementById(ov).classList.remove('open');document.getElementById(sh).classList.remove('open');document.body.style.overflow='';}
+
+let obs;
+function setupObs(){
+  obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('vis');obs.unobserve(e.target);}});},{threshold:.08});
+  document.querySelectorAll('.fu').forEach(el=>obs.observe(el));
+}
+
+function openLock(){document.getElementById('adm-lock').classList.add('show');document.getElementById('lk-pass').value='';document.getElementById('lk-err').style.display='none';}
+function closeLock(){document.getElementById('adm-lock').classList.remove('show');}
+function tryLogin(){const s=gs();if(document.getElementById('lk-pass').value===s.pass){closeLock();openAdmin();}else document.getElementById('lk-err').style.display='block';}
+function openAdmin(){loadAdmForms();document.getElementById('adm-panel').classList.add('show');}
+function closeAdmin(){document.getElementById('adm-panel').classList.remove('show');applyState();renderGrid();renderProy();}
+function swTab(name,btn){document.querySelectorAll('.adsec').forEach(s=>s.classList.remove('on'));document.querySelectorAll('.adtab').forEach(b=>b.classList.remove('on'));document.getElementById(`tab-${name}`).classList.add('on');btn.classList.add('on');}
+
+function loadAdmForms(){
+  const s=gs();
+  s.stats.forEach((st,i)=>{const n=document.getElementById(`s${i+1}n`),l=document.getElementById(`s${i+1}l`);if(n)n.value=st.num;if(l)l.value=st.label;});
+  const n=s.negocio;
+  document.getElementById('nf-nombre').value=n.nombre;document.getElementById('nf-tag').value=n.tagline;
+  document.getElementById('nf-wa').value=n.wa;document.getElementById('nf-ig').value=n.ig||'';document.getElementById('nf-fb').value=n.fb||'';
+  renderAdmEqList();renderAdmProy();
+}
+
+function renderAdmEqList(){
+  const s=gs(),list=document.getElementById('adm-eq-list');list.innerHTML='';
+  if(!s.equipos.length){list.innerHTML='<p style="color:var(--text2);font-size:13px;margin-bottom:12px">Sin equipos.</p>';return;}
+  s.equipos.forEach(eq=>{
+    const col=eq.disponibilidad==='disponible'?'var(--green)':eq.disponibilidad==='reservado'?'var(--red)':'var(--orange)';
+    const d=document.createElement('div');d.className='adc';
+    d.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:start"><div class="adc-name">${eq.emoji||'🏗️'} ${eq.nombre}</div><span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:${col}">${eq.disponibilidad.toUpperCase()}</span></div>
+      <div class="adc-meta">${eq.categoria} · ${eq.capacidad||'–'} · ${eq.anio||'–'}${eq.tarifa?` · RD$${Number(eq.tarifa).toLocaleString()}/día`:''}</div>
+      <div class="adc-acts"><button class="adb adb-edit" onclick="editEq(${eq.id})">✏️ Editar</button><button class="adb adb-del" onclick="delEq(${eq.id})">🗑️ Eliminar</button></div>`;
+    list.appendChild(d);
+  });
+}
+
+function saveEq(){
+  const s=gs();const eid=document.getElementById('eid').value;
+  const nombre=document.getElementById('ef-n').value.trim();if(!nombre){toast('⚠ El nombre es requerido');return;}
+  const eq={id:eid?parseInt(eid):Date.now(),nombre,emoji:document.getElementById('ef-e').value.trim()||'🏗️',
+    categoria:document.getElementById('ef-c').value,disponibilidad:document.getElementById('ef-d').value,
+    desc:document.getElementById('ef-desc').value.trim(),capacidad:document.getElementById('ef-cap').value.trim(),
+    anio:document.getElementById('ef-anio').value.trim(),operador:document.getElementById('ef-op').value,
+    horas:document.getElementById('ef-hrs').value.trim(),tarifa:parseInt(document.getElementById('ef-tarifa').value)||null,
+    foto:document.getElementById('ef-foto').value.trim()};
+  if(eid){const i=s.equipos.findIndex(e=>e.id===parseInt(eid));if(i>=0)s.equipos[i]=eq;}
+  else s.equipos.push(eq);
+  ss(s);cancelEdit();renderAdmEqList();applyState();renderGrid();toast('✅ Equipo guardado');
+}
+function editEq(id){
+  const s=gs(),eq=s.equipos.find(e=>e.id===id);if(!eq)return;
+  document.getElementById('eid').value=eq.id;document.getElementById('ef-n').value=eq.nombre;document.getElementById('ef-e').value=eq.emoji||'';
+  document.getElementById('ef-c').value=eq.categoria;document.getElementById('ef-d').value=eq.disponibilidad;
+  document.getElementById('ef-desc').value=eq.desc||'';document.getElementById('ef-cap').value=eq.capacidad||'';
+  document.getElementById('ef-anio').value=eq.anio||'';document.getElementById('ef-op').value=eq.operador||'Sí';
+  document.getElementById('ef-hrs').value=eq.horas||'';document.getElementById('ef-tarifa').value=eq.tarifa||'';
+  document.getElementById('ef-foto').value=eq.foto||'';
+  document.getElementById('eq-flbl').textContent='✏️ Editar Equipo';document.getElementById('adm-cancel').style.display='block';
+  document.getElementById('eq-flbl').scrollIntoView({behavior:'smooth'});
+}
+function cancelEdit(){
+  document.getElementById('eid').value='';
+  ['ef-n','ef-e','ef-desc','ef-cap','ef-anio','ef-hrs','ef-tarifa','ef-foto'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('ef-c').value='Retro Pala';document.getElementById('ef-d').value='disponible';document.getElementById('ef-op').value='Sí';
+  document.getElementById('eq-flbl').textContent='+ Nuevo Equipo';document.getElementById('adm-cancel').style.display='none';
+}
+function delEq(id){if(!confirm('¿Eliminar?'))return;const s=gs();s.equipos=s.equipos.filter(e=>e.id!==id);ss(s);renderAdmEqList();applyState();renderGrid();toast('🗑️ Eliminado');}
+function saveStats(){const s=gs();[1,2,3].forEach(i=>{s.stats[i-1]={num:parseInt(document.getElementById(`s${i}n`).value)||0,label:document.getElementById(`s${i}l`).value};});ss(s);buildTicker(s);applyState();toast('✅ Guardado');}
+function renderAdmProy(){
+  const s=gs(),list=document.getElementById('adm-proy');list.innerHTML='';
+  (s.proyectos||[]).forEach((u,i)=>{const d=document.createElement('div');d.style.cssText='display:flex;align-items:center;gap:8px;margin-bottom:8px';d.innerHTML=`<img src="${u}" style="width:44px;height:44px;object-fit:cover;border-radius:4px;border:1px solid var(--border)" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2244%22 height=%2244%22><rect fill=%22%2321262d%22 width=%2244%22 height=%2244%22/><text x=%2250%%22 y=%2250%%22 dominant-baseline=%22central%22 text-anchor=%22middle%22 fill=%22%23484f58%22 font-size=%2220%22>🏗</text></svg>'"><div style="flex:1;font-family:Share Tech Mono,monospace;font-size:10px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${u}</div><button onclick="delProy(${i})" style="background:none;border:none;color:var(--red);font-size:18px;cursor:pointer">✕</button>`;list.appendChild(d);});
+}
+function addProy(){const u=document.getElementById('pf-url').value.trim();if(!u)return;const s=gs();if(!s.proyectos)s.proyectos=[];s.proyectos.push(u);ss(s);document.getElementById('pf-url').value='';renderAdmProy();renderProy();toast('✅ Foto agregada');}
+function delProy(i){const s=gs();s.proyectos.splice(i,1);ss(s);renderAdmProy();renderProy();toast('🗑️ Eliminada');}
+function saveNeg(){const s=gs();s.negocio={nombre:document.getElementById('nf-nombre').value,tagline:document.getElementById('nf-tag').value,wa:document.getElementById('nf-wa').value.replace(/\D/g,''),ig:document.getElementById('nf-ig').value,fb:document.getElementById('nf-fb').value};ss(s);applyState();toast('✅ Guardado');}
+function changePass(){
+  const s=gs();const act=document.getElementById('pa-act').value,nw=document.getElementById('pa-new').value,cf=document.getElementById('pa-conf').value;
+  if(act!==s.pass){toast('⚠ Contraseña actual incorrecta');return;}if(nw!==cf){toast('⚠ No coinciden');return;}if(nw.length<4){toast('⚠ Mínimo 4 caracteres');return;}
+  s.pass=nw;ss(s);['pa-act','pa-new','pa-conf'].forEach(id=>document.getElementById(id).value='');toast('✅ Contraseña cambiada');
+}
+let brandTaps=0,brandTimer=null;
+function brandTap(){
+  brandTaps++;
+  clearTimeout(brandTimer);
+  if(brandTaps>=5){brandTaps=0;openLock();return;}
+  brandTimer=setTimeout(()=>brandTaps=0,1500);
+}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600);}
+</script>
+</body>
+</html>
