@@ -505,7 +505,7 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 20p
         <div class="ads-title" style="font-size:16px;margin-bottom:12px">🎬 Agregar Video</div>
         <div style="background:rgba(248,81,73,.06);border:1px solid rgba(248,81,73,.2);border-radius:var(--rsm);padding:10px 12px;margin-bottom:10px;display:flex;align-items:flex-start;gap:8px">
           <span style="font-size:16px">⚠️</span>
-          <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text2);line-height:1.5">Videos deben ser cortos (máx 30s, menos de 50MB). Formatos: MP4, MOV, WEBM. Se suben a Firebase Storage y se guardan como URL.</span>
+          <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text2);line-height:1.5">Videos: MP4, MOV, WEBM · Máx 32MB. Se suben a imgbb y se guardan como link directo.</span>
         </div>
         <input type="file" id="proj-video-file" accept="video/mp4,video/quicktime,video/webm" style="display:none" onchange="handleProjVideoUpload(this)">
         <label for="proj-video-file" style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:16px;background:rgba(248,81,73,.08);border:2px dashed var(--red);border-radius:var(--r);color:var(--red);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:15px;text-transform:uppercase;letter-spacing:1px;cursor:pointer;margin-bottom:8px">
@@ -549,7 +549,49 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 20p
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, collection, doc, getDocs, setDoc, deleteDoc, updateDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+const IMGBB_KEY = '093b7d2d800e2eedec3e3a4f14d0b2cb';
+
+async function uploadToImgbb(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const base64 = e.target.result.split(',')[1];
+      const formData = new FormData();
+      formData.append('key', IMGBB_KEY);
+      formData.append('image', base64);
+      formData.append('name', file.name.replace(/\.[^.]+$/, '').substring(0, 30));
+      try {
+        const resp = await fetch('https://api.imgbb.com/1/upload', { method: 'POST', body: formData });
+        const data = await resp.json();
+        if (data.success) resolve(data.data.url);
+        else reject(new Error(data.error?.message || 'Upload failed'));
+      } catch(err) { reject(err); }
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+async function uploadVideoToImgbb(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const base64 = e.target.result.split(',')[1];
+      const formData = new FormData();
+      formData.append('key', IMGBB_KEY);
+      formData.append('image', base64);
+      formData.append('name', file.name.replace(/\.[^.]+$/, '').substring(0, 30));
+      try {
+        const resp = await fetch('https://api.imgbb.com/1/upload', { method: 'POST', body: formData });
+        const data = await resp.json();
+        if (data.success) resolve(data.data.url);
+        else reject(new Error(data.error?.message || 'Upload failed'));
+      } catch(err) { reject(err); }
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
 
 const firebaseConfig = {
   apiKey: "AIzaSyB1jB2CxdaJdEhS9zkt5n_TQyL0aDXTf2Y",
@@ -563,7 +605,6 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const storage = getStorage(app);
 
 let appState = { pass: '123456', equipos: [], stats: [], negocio: {}, loading: true };
 let cart = [], curEqId = null, qtMode = 'general', opVal = 'Sí';
@@ -874,18 +915,16 @@ async function saveEq() {
   const id = eid || `eq_${Date.now()}`;
   let fotoUrl = document.getElementById('ef-foto-url').value;
   if (pendingUpload) {
-    toast('⬆ Subiendo foto...');
-    const storageRef = ref(storage, `equipos/${id}/foto.jpg`);
-    const uploadTask = uploadBytesResumable(storageRef, pendingUpload);
-    fotoUrl = await new Promise((resolve, reject) => {
-      uploadTask.on('state_changed', snapshot => {
-        const pct = Math.round(snapshot.bytesTransferred / snapshot.totalBytes * 100);
-        document.getElementById('upload-bar').style.width = pct + '%';
-        document.getElementById('upload-pct').textContent = pct + '%';
-      }, reject, async () => {
-        try { resolve(await getDownloadURL(uploadTask.snapshot.ref)); } catch(e) { resolve(''); }
-      });
-    });
+    toast('⬆ Subiendo foto a imgbb...');
+    document.getElementById('upload-bar').style.width = '50%';
+    document.getElementById('upload-pct').textContent = '50%';
+    try {
+      fotoUrl = await uploadToImgbb(pendingUpload);
+      document.getElementById('upload-bar').style.width = '100%';
+      document.getElementById('upload-pct').textContent = '100%';
+    } catch(e) {
+      toast('❌ Error al subir foto'); fotoUrl = '';
+    }
     pendingUpload = null;
   }
   const eq = {
@@ -1030,7 +1069,7 @@ function handleProjPhotoUpload(input) {
 function handleProjVideoUpload(input) {
   const file = input.files[0];
   if (!file) return;
-  if (file.size > 100 * 1024 * 1024) { toast('⚠ Video muy grande (máx 100MB)'); return; }
+  if (file.size > 32 * 1024 * 1024) { toast('⚠ Video muy grande (máx 32MB)'); return; }
   projPendingVideo = file;
   projPendingPhoto = null;
   const preview = document.getElementById('proj-video-preview');
@@ -1043,33 +1082,29 @@ function handleProjVideoUpload(input) {
 
 async function addProjMedia(type) {
   if (type === 'photo' && projPendingPhoto) {
-    toast('⬆ Subiendo foto...');
+    toast('⬆ Subiendo foto a imgbb...');
     const id = `proj_${Date.now()}`;
-    const storageRef = ref(storage, `proyectos/${id}.jpg`);
-    const snap = await uploadBytesResumable(storageRef, projPendingPhoto);
-    const url = await getDownloadURL(snap.ref);
-    await setDoc(doc(db, 'proyectos', id), { type: 'photo', url, createdAt: new Date().toISOString() });
-    if (!appState.proyectos) appState.proyectos = [];
-    appState.proyectos.push({ id, type: 'photo', url });
-    projPendingPhoto = null;
-    document.getElementById('proj-photo-preview').style.display = 'none';
-    document.getElementById('proj-photo-file').value = '';
-    renderAdmProjList();
-    renderProj();
-    toast('✅ Foto agregada a la galería');
+    try {
+      const url = await uploadToImgbb(projPendingPhoto);
+      await setDoc(doc(db, 'proyectos', id), { type: 'photo', url, createdAt: new Date().toISOString() });
+      if (!appState.proyectos) appState.proyectos = [];
+      appState.proyectos.push({ id, type: 'photo', url });
+      projPendingPhoto = null;
+      document.getElementById('proj-photo-preview').style.display = 'none';
+      document.getElementById('proj-photo-file').value = '';
+      renderAdmProjList();
+      renderProj();
+      toast('✅ Foto agregada a la galería');
+    } catch(e) { toast('❌ Error al subir foto'); }
   } else if (type === 'video' && projPendingVideo) {
-    toast('🎬 Subiendo video (puede tardar)...');
+    toast('🎬 Subiendo video a imgbb...');
     const id = `proj_${Date.now()}`;
-    const ext = projPendingVideo.name.split('.').pop();
-    const storageRef = ref(storage, `proyectos/${id}.${ext}`);
-    const uploadTask = uploadBytesResumable(storageRef, projPendingVideo);
-    uploadTask.on('state_changed', snap => {
-      const pct = Math.round(snap.bytesTransferred / snap.totalBytes * 100);
-      document.getElementById('proj-video-bar').style.width = pct + '%';
-      document.getElementById('proj-video-pct').textContent = pct + '%';
-    }, err => { toast('❌ Error subiendo video'); projPendingVideo = null; },
-    async () => {
-      const url = await getDownloadURL(uploadTask.snapshot.ref);
+    try {
+      document.getElementById('proj-video-bar').style.width = '50%';
+      document.getElementById('proj-video-pct').textContent = '50%';
+      const url = await uploadVideoToImgbb(projPendingVideo);
+      document.getElementById('proj-video-bar').style.width = '100%';
+      document.getElementById('proj-video-pct').textContent = '100%';
       await setDoc(doc(db, 'proyectos', id), { type: 'video', url, createdAt: new Date().toISOString() });
       if (!appState.proyectos) appState.proyectos = [];
       appState.proyectos.push({ id, type: 'video', url });
@@ -1079,7 +1114,7 @@ async function addProjMedia(type) {
       document.getElementById('proj-video-file').value = '';
       renderAdmProjList();
       toast('✅ Video agregado a la galería');
-    });
+    } catch(e) { toast('❌ Error al subir video'); projPendingVideo = null; }
   } else {
     toast('⚠ Selecciona un archivo primero');
   }
