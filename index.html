@@ -591,6 +591,17 @@ function loadState() {
 function saveState(state) {
   localStorage.setItem(LS_KEY, JSON.stringify(state));
   localStorage.setItem('sethika_admin_pass', state.pass);
+  pushToFirebase(state);
+}
+
+function pushToFirebase(st) {
+  if (!db) return;
+  try {
+    st.equipos.forEach(eq => { setDoc(doc(db, 'equipos', eq.id), eq).catch(()=>{}); });
+    setDoc(doc(db, 'negocio', 'info'), st.negocio).catch(()=>{});
+    setDoc(doc(db, 'stats', 'data'), { stats: st.stats }).catch(()=>{});
+    if(st.proyectos) { setDoc(doc(db, 'proyectos', 'data'), { proyectos: st.proyectos }).catch(()=>{}); }
+  } catch(e) { console.error("FB Push error", e); }
 }
 
 let state = loadState();
@@ -1095,19 +1106,23 @@ hideLoad();
 
 // Then try Firebase in background (for public data sync)
 getDocs(collection(db, 'equipos')).then(eqSnap => {
-  if (!eqSnap.empty && eqSnap.docs.length > state.equipos.length) {
+  if (!eqSnap.empty) {
     state.equipos = eqSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-    saveState(state);
+    localStorage.setItem(LS_KEY, JSON.stringify(state));
     applyState(); renderGrid();
   }
 }).catch(() => {});
 
 getDocs(collection(db, 'negocio')).then(negSnap => {
-  if (!negSnap.empty) { state.negocio = negSnap.docs[0].data(); saveState(state); applyState(); }
+  if (!negSnap.empty && negSnap.docs[0]) { state.negocio = negSnap.docs[0].data(); localStorage.setItem(LS_KEY, JSON.stringify(state)); applyState(); }
 }).catch(() => {});
 
 getDocs(collection(db, 'stats')).then(statsSnap => {
-  if (!statsSnap.empty) { state.stats = statsSnap.docs.map(d => d.data()); saveState(state); buildTicker(); applyState(); }
+  if (!statsSnap.empty && statsSnap.docs[0]) { state.stats = statsSnap.docs[0].data().stats || statsSnap.docs.map(d => d.data()); localStorage.setItem(LS_KEY, JSON.stringify(state)); buildTicker(); applyState(); }
+}).catch(() => {});
+
+getDocs(collection(db, 'proyectos')).then(projSnap => {
+  if (!projSnap.empty && projSnap.docs[0]) { state.proyectos = projSnap.docs[0].data().proyectos || []; localStorage.setItem(LS_KEY, JSON.stringify(state)); }
 }).catch(() => {});
 </script>
 </body>
